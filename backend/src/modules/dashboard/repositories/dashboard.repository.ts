@@ -134,6 +134,29 @@ export class DashboardRepository {
     return result.rows[0] || null;
   }
 
+  async updateSavingsGoal(userId: number, data: {
+    targetAmount?: number;
+    currentAmount?: number;
+  }): Promise<SavingsGoalRow> {
+    await this.ensureUserData(userId);
+
+    const query = `
+      UPDATE savings_goals
+      SET target_amount = COALESCE($1, target_amount),
+          current_amount = COALESCE($2, current_amount),
+          updated_at = CURRENT_TIMESTAMP
+      WHERE user_id = $3
+      RETURNING id, user_id, target_amount, current_amount
+    `;
+    const values = [
+      data.targetAmount !== undefined ? data.targetAmount : null,
+      data.currentAmount !== undefined ? data.currentAmount : null,
+      userId
+    ];
+    const result = await pool.query(query, values);
+    return result.rows[0];
+  }
+
   async getActiveAlertsByUserId(userId: number): Promise<PaymentAlertRow[]> {
     const query = `
       SELECT id, user_id, title, description, alert_type, is_active
@@ -143,5 +166,36 @@ export class DashboardRepository {
     `;
     const result = await pool.query(query, [userId]);
     return result.rows;
+  }
+
+  async dismissAlert(userId: number, alertId: number): Promise<boolean> {
+    const query = `
+      UPDATE payment_alerts
+      SET is_active = FALSE
+      WHERE id = $1 AND user_id = $2
+      RETURNING id
+    `;
+    const result = await pool.query(query, [alertId, userId]);
+    return result.rowCount !== null && result.rowCount > 0;
+  }
+
+  async createAlert(userId: number, data: {
+    title: string;
+    description: string;
+    alertType?: string;
+  }): Promise<PaymentAlertRow> {
+    const query = `
+      INSERT INTO payment_alerts (user_id, title, description, alert_type, is_active)
+      VALUES ($1, $2, $3, $4, TRUE)
+      RETURNING id, user_id, title, description, alert_type, is_active
+    `;
+    const values = [
+      userId,
+      data.title,
+      data.description,
+      data.alertType || 'WARNING'
+    ];
+    const result = await pool.query(query, values);
+    return result.rows[0];
   }
 }

@@ -1,8 +1,24 @@
 import { Request, Response } from 'express';
 import { DashboardService } from '../services/dashboard.service.js';
+import { AppError } from '../../../middlewares/error.middleware.js';
 
 export class DashboardController {
   private service = new DashboardService();
+
+  private handleError(res: Response, error: any, defaultMsg: string): void {
+    if (error instanceof AppError) {
+      res.status(error.statusCode).json({
+        success: false,
+        message: error.message
+      });
+    } else {
+      console.error(defaultMsg, error);
+      res.status(500).json({
+        success: false,
+        message: defaultMsg
+      });
+    }
+  }
 
   async getStats(req: Request, res: Response): Promise<void> {
     try {
@@ -21,11 +37,7 @@ export class DashboardController {
         data: stats
       });
     } catch (error) {
-      console.error('Error en DashboardController.getStats:', error);
-      res.status(500).json({
-        success: false,
-        message: 'Error al obtener estadísticas del dashboard.'
-      });
+      this.handleError(res, error, 'Error al obtener estadísticas del dashboard.');
     }
   }
 
@@ -55,11 +67,37 @@ export class DashboardController {
         data: income
       });
     } catch (error: any) {
-      console.error('Error en DashboardController.createIncome:', error);
-      res.status(400).json({
-        success: false,
-        message: error.message || 'Error al registrar el ingreso.'
+      this.handleError(res, error, 'Error al registrar el ingreso.');
+    }
+  }
+
+  async createExpense(req: Request, res: Response): Promise<void> {
+    try {
+      const userId = (req as any).user?.id;
+      if (!userId) {
+        res.status(401).json({
+          success: false,
+          message: 'Usuario no autenticado.'
+        });
+        return;
+      }
+
+      const { title, merchant, category, amount, date } = req.body;
+      const expense = await this.service.createExpense(userId, {
+        title,
+        merchant,
+        category,
+        amount: parseFloat(amount),
+        date
       });
+
+      res.status(201).json({
+        success: true,
+        message: 'Gasto registrado exitosamente.',
+        data: expense
+      });
+    } catch (error: any) {
+      this.handleError(res, error, 'Error al registrar el gasto.');
     }
   }
 
@@ -90,11 +128,7 @@ export class DashboardController {
         data: updated
       });
     } catch (error: any) {
-      console.error('Error en DashboardController.updateTransaction:', error);
-      res.status(400).json({
-        success: false,
-        message: error.message || 'Error al actualizar la transacción.'
-      });
+      this.handleError(res, error, 'Error al actualizar la transacción.');
     }
   }
 
@@ -116,11 +150,56 @@ export class DashboardController {
         message: 'Transacción eliminada exitosamente.'
       });
     } catch (error: any) {
-      console.error('Error en DashboardController.deleteTransaction:', error);
-      res.status(400).json({
-        success: false,
-        message: error.message || 'Error al eliminar la transacción.'
+      this.handleError(res, error, 'Error al eliminar la transacción.');
+    }
+  }
+
+  async updateSavingsGoal(req: Request, res: Response): Promise<void> {
+    try {
+      const userId = (req as any).user?.id;
+      if (!userId) {
+        res.status(401).json({
+          success: false,
+          message: 'Usuario no autenticado.'
+        });
+        return;
+      }
+
+      const { targetAmount, currentAmount } = req.body;
+      const updatedGoal = await this.service.updateSavingsGoal(userId, {
+        targetAmount: targetAmount !== undefined ? parseFloat(targetAmount) : undefined,
+        currentAmount: currentAmount !== undefined ? parseFloat(currentAmount) : undefined
       });
+
+      res.status(200).json({
+        success: true,
+        message: 'Meta de ahorro actualizada exitosamente.',
+        data: updatedGoal
+      });
+    } catch (error: any) {
+      this.handleError(res, error, 'Error al actualizar la meta de ahorro.');
+    }
+  }
+
+  async dismissAlert(req: Request, res: Response): Promise<void> {
+    try {
+      const userId = (req as any).user?.id;
+      const idStr = String(req.params['id'] || req.params.id);
+      if (!userId) {
+        res.status(401).json({
+          success: false,
+          message: 'Usuario no autenticado.'
+        });
+        return;
+      }
+
+      await this.service.dismissAlert(userId, parseInt(idStr, 10));
+      res.status(200).json({
+        success: true,
+        message: 'Alerta resuelta exitosamente.'
+      });
+    } catch (error: any) {
+      this.handleError(res, error, 'Error al resolver la alerta.');
     }
   }
 }

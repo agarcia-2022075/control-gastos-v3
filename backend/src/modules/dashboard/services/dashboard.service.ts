@@ -1,4 +1,5 @@
 import { DashboardRepository } from '../repositories/dashboard.repository.js';
+import { AppError } from '../../../middlewares/error.middleware.js';
 
 export interface CategoryBreakdown {
   name: string;
@@ -39,10 +40,15 @@ export interface DashboardStatsResponse {
   }>;
   gastosPorCategoria: CategoryBreakdown[];
   alertas: Array<{
+    id: number;
     title: string;
     description: string;
     alertType: string;
   }>;
+}
+
+function round2(val: number): number {
+  return Math.round((val + Number.EPSILON) * 100) / 100;
 }
 
 export class DashboardService {
@@ -72,16 +78,27 @@ export class DashboardService {
     const weekMap: { [key: string]: { income: number; expense: number } } = {};
     weekLabels.forEach(w => weekMap[w] = { income: 0, expense: 0 });
 
-    const yearLabels = ['2021', '2022', '2023', '2024', '2025', '2026'];
-    const yearMap: { [key: string]: { income: number; expense: number } } = {};
-    yearLabels.forEach(y => yearMap[y] = { income: 0, expense: 0 });
-
     const now = new Date();
     const currentYear = now.getFullYear();
     const currentMonthIdx = now.getMonth(); // 0-based
 
+    // Dynamic Year Range: from minYear or (currentYear - 4) to (currentYear + 1)
+    const yearsSet = new Set<number>();
+    for (let y = currentYear - 4; y <= currentYear + 1; y++) {
+      yearsSet.add(y);
+    }
+    transactions.forEach(tx => {
+      const parts = String(tx.date).split('T')[0].split('-');
+      const y = parseInt(parts[0], 10);
+      if (!isNaN(y)) yearsSet.add(y);
+    });
+
+    const yearLabels = Array.from(yearsSet).sort((a, b) => a - b).map(String);
+    const yearMap: { [key: string]: { income: number; expense: number } } = {};
+    yearLabels.forEach(y => yearMap[y] = { income: 0, expense: 0 });
+
     transactions.forEach((tx) => {
-      const amount = parseFloat(tx.amount);
+      const amount = round2(parseFloat(tx.amount));
 
       // Timezone-safe Date parsing from YYYY-MM-DD string
       const dateParts = String(tx.date).split('T')[0].split('-');
@@ -91,23 +108,23 @@ export class DashboardService {
       const txDate = new Date(year, monthIdx, day);
 
       if (tx.type === 'INCOME') {
-        totalIncome += amount;
+        totalIncome = round2(totalIncome + amount);
         if (monthIdx === currentMonthIdx && year === currentYear) {
-          currentMonthIncome += amount;
+          currentMonthIncome = round2(currentMonthIncome + amount);
         }
       } else {
-        totalExpense += amount;
+        totalExpense = round2(totalExpense + amount);
         if (monthIdx === currentMonthIdx && year === currentYear) {
-          currentMonthExpense += amount;
+          currentMonthExpense = round2(currentMonthExpense + amount);
         }
-        categoryMap[tx.category] = (categoryMap[tx.category] || 0) + amount;
+        categoryMap[tx.category] = round2((categoryMap[tx.category] || 0) + amount);
       }
 
       // Map to Month
       const mName = monthLabels[monthIdx];
       if (mName && monthMap[mName]) {
-        if (tx.type === 'INCOME') monthMap[mName].income += amount;
-        else monthMap[mName].expense += amount;
+        if (tx.type === 'INCOME') monthMap[mName].income = round2(monthMap[mName].income + amount);
+        else monthMap[mName].expense = round2(monthMap[mName].expense + amount);
       }
 
       // Map to Day of Week
@@ -115,28 +132,28 @@ export class DashboardService {
       if (dayIdx === -1) dayIdx = 6;
       const wName = weekLabels[dayIdx];
       if (wName && weekMap[wName]) {
-        if (tx.type === 'INCOME') weekMap[wName].income += amount;
-        else weekMap[wName].expense += amount;
+        if (tx.type === 'INCOME') weekMap[wName].income = round2(weekMap[wName].income + amount);
+        else weekMap[wName].expense = round2(weekMap[wName].expense + amount);
       }
 
       // Map to Year
       const yName = year.toString();
       if (yearMap[yName]) {
-        if (tx.type === 'INCOME') yearMap[yName].income += amount;
-        else yearMap[yName].expense += amount;
+        if (tx.type === 'INCOME') yearMap[yName].income = round2(yearMap[yName].income + amount);
+        else yearMap[yName].expense = round2(yearMap[yName].expense + amount);
       }
     });
 
-    const saldoDisponible = totalIncome - totalExpense;
+    const saldoDisponible = round2(totalIncome - totalExpense);
 
     // Savings Goal
-    const targetAmount = savingsGoal ? parseFloat(savingsGoal.target_amount) : 10000;
-    const currentAmount = savingsGoal ? parseFloat(savingsGoal.current_amount) : 0;
+    const targetAmount = savingsGoal ? round2(parseFloat(savingsGoal.target_amount)) : 10000;
+    const currentAmount = savingsGoal ? round2(parseFloat(savingsGoal.current_amount)) : 0;
     const goalPercentage = targetAmount > 0 ? Math.min(100, Math.round((currentAmount / targetAmount) * 100)) : 0;
 
     // Category Breakdown
     const colorClasses = ['fill-cyan', 'fill-purple', 'fill-amber', 'fill-rose'];
-    const totalCatExpense = Object.values(categoryMap).reduce((a, b) => a + b, 0);
+    const totalCatExpense = Object.values(categoryMap).reduce((a, b) => round2(a + b), 0);
 
     const gastosPorCategoria: CategoryBreakdown[] = totalCatExpense > 0
       ? Object.keys(categoryMap).map((catName, idx) => {
@@ -150,7 +167,7 @@ export class DashboardService {
         })
       : [];
 
-    // Format trends for ALL 12 months
+    // Format trends
     const mesPoints: TrendPoint[] = monthLabels.map(m => ({
       label: m,
       income: monthMap[m].income,
@@ -177,7 +194,7 @@ export class DashboardService {
       category: tx.category,
       date: tx.date,
       status: tx.status,
-      amount: parseFloat(tx.amount),
+      amount: round2(parseFloat(tx.amount)),
       type: tx.type
     }));
 
@@ -198,6 +215,7 @@ export class DashboardService {
       transaccionesRecientes,
       gastosPorCategoria,
       alertas: alerts.map(a => ({
+        id: a.id,
         title: a.title,
         description: a.description,
         alertType: a.alert_type
@@ -212,16 +230,56 @@ export class DashboardService {
     amount: number;
     date?: string;
   }) {
-    if (!data.title || !data.category || !data.amount || data.amount <= 0) {
-      throw new Error('Datos de ingreso inválidos. El monto debe ser positivo y se requiere un concepto.');
+    if (!data.title || typeof data.title !== 'string' || data.title.trim() === '') {
+      throw new AppError(400, 'El concepto del ingreso es obligatorio.');
+    }
+    if (!data.category || typeof data.category !== 'string' || data.category.trim() === '') {
+      throw new AppError(400, 'La categoría del ingreso es obligatoria.');
+    }
+    if (data.amount === undefined || isNaN(data.amount) || data.amount <= 0) {
+      throw new AppError(400, 'El monto del ingreso debe ser un número mayor a cero.');
+    }
+    if (data.date && !/^\d{4}-\d{2}-\d{2}$/.test(data.date)) {
+      throw new AppError(400, 'El formato de fecha debe ser YYYY-MM-DD.');
     }
 
     return await this.repo.createTransaction(userId, {
       type: 'INCOME',
-      title: data.title,
-      merchant: data.merchant || 'Depósito Registrado',
-      category: data.category,
-      amount: data.amount,
+      title: data.title.trim(),
+      merchant: data.merchant?.trim() || 'Depósito Registrado',
+      category: data.category.trim(),
+      amount: round2(data.amount),
+      status: 'COMPLETED',
+      date: data.date || null
+    });
+  }
+
+  async createExpense(userId: number, data: {
+    title: string;
+    merchant?: string;
+    category: string;
+    amount: number;
+    date?: string;
+  }) {
+    if (!data.title || typeof data.title !== 'string' || data.title.trim() === '') {
+      throw new AppError(400, 'El concepto del gasto es obligatorio.');
+    }
+    if (!data.category || typeof data.category !== 'string' || data.category.trim() === '') {
+      throw new AppError(400, 'La categoría del gasto es obligatoria.');
+    }
+    if (data.amount === undefined || isNaN(data.amount) || data.amount <= 0) {
+      throw new AppError(400, 'El monto del gasto debe ser un número mayor a cero.');
+    }
+    if (data.date && !/^\d{4}-\d{2}-\d{2}$/.test(data.date)) {
+      throw new AppError(400, 'El formato de fecha debe ser YYYY-MM-DD.');
+    }
+
+    return await this.repo.createTransaction(userId, {
+      type: 'EXPENSE',
+      title: data.title.trim(),
+      merchant: data.merchant?.trim() || 'Comercio Registrado',
+      category: data.category.trim(),
+      amount: round2(data.amount),
       status: 'COMPLETED',
       date: data.date || null
     });
@@ -234,26 +292,65 @@ export class DashboardService {
     amount?: number;
     date?: string;
   }) {
-    if (!id || !userId) {
-      throw new Error('ID de transacción o usuario inválido.');
+    if (!id || isNaN(id) || !userId) {
+      throw new AppError(400, 'ID de transacción o usuario inválido.');
     }
-    if (data.amount !== undefined && data.amount <= 0) {
-      throw new Error('El monto debe ser positivo y mayor a 0.');
+    if (data.amount !== undefined && (isNaN(data.amount) || data.amount <= 0)) {
+      throw new AppError(400, 'El monto debe ser un número mayor a cero.');
     }
-    const updated = await this.repo.updateTransactionById(id, userId, data);
+    if (data.date && !/^\d{4}-\d{2}-\d{2}$/.test(data.date)) {
+      throw new AppError(400, 'El formato de fecha debe ser YYYY-MM-DD.');
+    }
+
+    const updated = await this.repo.updateTransactionById(id, userId, {
+      title: data.title?.trim(),
+      merchant: data.merchant !== undefined ? data.merchant?.trim() : undefined,
+      category: data.category?.trim(),
+      amount: data.amount !== undefined ? round2(data.amount) : undefined,
+      date: data.date || null
+    });
+
     if (!updated) {
-      throw new Error('No se encontró la transacción o no tienes permisos para editarla.');
+      throw new AppError(404, 'No se encontró la transacción o no tienes permisos para editarla.');
     }
     return updated;
   }
 
   async deleteTransaction(id: number, userId: number): Promise<boolean> {
-    if (!id || !userId) {
-      throw new Error('ID de transacción o usuario inválido.');
+    if (!id || isNaN(id) || !userId) {
+      throw new AppError(400, 'ID de transacción o usuario inválido.');
     }
     const success = await this.repo.deleteTransactionById(id, userId);
     if (!success) {
-      throw new Error('No se encontró la transacción o no tienes permisos para eliminarla.');
+      throw new AppError(404, 'No se encontró la transacción o no tienes permisos para eliminarla.');
+    }
+    return true;
+  }
+
+  async updateSavingsGoal(userId: number, data: {
+    targetAmount?: number;
+    currentAmount?: number;
+  }) {
+    if (data.targetAmount !== undefined && (isNaN(data.targetAmount) || data.targetAmount < 0)) {
+      throw new AppError(400, 'El monto objetivo de ahorro debe ser un número positivo.');
+    }
+    if (data.currentAmount !== undefined && (isNaN(data.currentAmount) || data.currentAmount < 0)) {
+      throw new AppError(400, 'El monto actual de ahorro debe ser un número positivo.');
+    }
+
+    return await this.repo.updateSavingsGoal(userId, {
+      targetAmount: data.targetAmount !== undefined ? round2(data.targetAmount) : undefined,
+      currentAmount: data.currentAmount !== undefined ? round2(data.currentAmount) : undefined
+    });
+  }
+
+  async dismissAlert(userId: number, alertId: number): Promise<boolean> {
+    if (!alertId || isNaN(alertId)) {
+      throw new AppError(400, 'ID de alerta inválido.');
+    }
+    const success = await this.repo.dismissAlert(userId, alertId);
+    if (!success) {
+      throw new AppError(404, 'Alerta no encontrada o ya resuelta.');
     }
     return true;
   }

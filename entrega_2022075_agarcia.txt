@@ -1,0 +1,43 @@
+======================================================================
+                  ENTREGA DE PROYECTO - CONTROL DE GASTOS V3
+======================================================================
+
+INFORMACIÓN DEL ESTUDIANTE:
+----------------------------------------------------------------------
+Nombre Completo: André Paolo García Valdéz
+Carné:           2022075
+Sección:         IN5AM
+Institución:     Centro Educativo Técnico Laboral Kinal
+
+INFORMACIÓN DEL REPOSITORIO GITHUB:
+----------------------------------------------------------------------
+URL del Repositorio: https://github.com/agarcia-2022075/control-gastos-v3.git
+Rama Activa:         agarcia-2022075
+Último Commit:       869c3c0 - docs: agregar propuesta de mapeo funcional de ingresos en formatos docx y pdf
+
+RESUMEN DE FUNCIONALIDADES E IMPLEMENTACIÓN TÉCNICA:
+----------------------------------------------------------------------
+1. ARQUITECTURA Y BACKEND (Node.js, Express, TypeScript, PostgreSQL)
+   - Autenticación segura mediante Tokens JWT (24h) y aislamiento completo por user_id en la base de datos PostgreSQL.
+   - Endpoint de estadísticas del Dashboard (GET /api/dashboard/stats) con agregación dinámica de tendencias (Semana, Mes, Año).
+   - Registro de Ingresos (POST /api/dashboard/incomes).
+   - Edición y Eliminación de Transacciones con actualización de saldos en tiempo real (PATCH, PUT, DELETE /api/dashboard/transactions/:id).
+   - Manejo seguro de zonas horarias UTC y formateo dinámico de reportes.
+
+2. INTERFAZ DE USUARIO Y FRONTEND (Angular 18+, Signals, RxJS, SVG)
+   - Diseño 4K Glassmorphism estilo cristal con refracción, degradados índigo (#1c27ad), medianoche (#070918) y acentos neón (#34d399, #38bdf8, #f43f5e).
+   - Dashboard (/dashboard): 4 Tarjetas KPI, Gráfica de Tendencia Bezier Catmull-Rom vectorial nativa (sin librerías externas), deslose por categoría, buscador en vivo y paginación de 5 registros por página (Vista de Solo Lectura).
+   - Registrar Ingreso (/ingreso): Formulario Glassmorphic interactivo, Tarjetas KPI de abonos, Tabla Inteligente con funciones exclusivas de Edición (Lápiz) y Eliminación (Caneca), Modal emergente Glassmorphic de confirmación, Buscador en Vivo y Paginación.
+   - Módulo Admin (/admin): Gestión de usuarios, roles (USER / ADMIN) e información de cuenta.
+
+3. SEGURIDAD Y MANEJO DE SESIÓN
+   - Servicio de Monitoreo de Inactividad (SessionService + NgZone) que detecta 3 minutos de inactividad continuada en tiempo real.
+   - Reseteo automático del temporizador al mover el mouse, teclear, hacer scroll o realizar peticiones HTTP.
+   - Notificación reactiva inmediata mediante Modal Glassmorphic de reinicio de sesión sin necesidad de refrescar la página.
+
+DOCUMENTACIÓN INCLUIDA EN EL REPOSITORIO:
+----------------------------------------------------------------------
+- Propuesta_Mapeo_Ingresos_Glassmorphism.docx (Propuesta Técnica y Estructural)
+- Propuesta_Mapeo_Ingresos_Glassmorphism.pdf (Documento Oficial en PDF)
+
+======================================================================
