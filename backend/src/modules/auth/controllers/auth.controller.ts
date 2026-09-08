@@ -30,6 +30,19 @@ export class AuthController {
     }
   };
 
+  googleLogin = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const authResult = await this.authSvc.googleLogin(req.body);
+      res.status(200).json({
+        success: true,
+        message: 'Inicio de sesión con Google exitoso',
+        data: authResult
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
   getMe = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       if (!req.user) {
