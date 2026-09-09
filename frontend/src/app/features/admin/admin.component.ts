@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -13,7 +13,7 @@ import { AuthService, UserResponse } from '../../core/services/auth.service';
   styleUrl: './admin.component.css',
   changeDetection: ChangeDetectionStrategy.Default
 })
-export class AdminComponent implements OnInit {
+export class AdminComponent implements OnInit, OnDestroy {
   authService = inject(AuthService);
   private cdr = inject(ChangeDetectorRef);
 
@@ -22,12 +22,18 @@ export class AdminComponent implements OnInit {
   loading: boolean = true;
   errorMessage: string = '';
   successMessage: string = '';
+  private timeoutHandles: any[] = [];
 
   ngOnInit(): void {
     // Set current user immediately from service state (already populated from login)
     this.currentUser = this.authService.currentUserData;
     // Load the users list
     this.fetchUsers();
+  }
+
+  ngOnDestroy(): void {
+    this.timeoutHandles.forEach(h => clearTimeout(h));
+    this.timeoutHandles = [];
   }
 
   fetchUsers(): void {
@@ -74,20 +80,22 @@ export class AdminComponent implements OnInit {
             this.successMessage = `Rol de ${user.email} actualizado a ${newRole}.`;
             this.cdr.detectChanges();
             this.fetchUsers();
-            setTimeout(() => {
+            const handle = setTimeout(() => {
               this.successMessage = '';
               this.cdr.detectChanges();
             }, 4000);
+            this.timeoutHandles.push(handle);
           }
         },
         error: (err: any) => {
           this.errorMessage = err?.error?.message || 'No se pudo cambiar el rol del usuario.';
           this.cdr.detectChanges();
           this.fetchUsers();
-          setTimeout(() => {
+          const handle = setTimeout(() => {
             this.errorMessage = '';
             this.cdr.detectChanges();
           }, 4000);
+          this.timeoutHandles.push(handle);
         }
       });
   }

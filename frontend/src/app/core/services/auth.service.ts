@@ -47,6 +47,19 @@ export class AuthService {
       );
   }
 
+  googleLogin(data: string | { credential?: string; email?: string; name?: string }): Observable<{ success: boolean; message: string; data: AuthResponse }> {
+    const payload = typeof data === 'string' ? { credential: data } : data;
+    return this.http.post<{ success: boolean; message: string; data: AuthResponse }>(`${this.apiUrl}/auth/google`, payload)
+      .pipe(
+        tap(res => {
+          if (res.success && res.data?.token) {
+            this.saveToken(res.data.token);
+            this.currentUserData = res.data.user;
+          }
+        })
+      );
+  }
+
   getCurrentUser(): Observable<{ success: boolean; data: UserResponse }> {
     return this.http.get<{ success: boolean; data: UserResponse }>(`${this.apiUrl}/auth/me`)
       .pipe(
