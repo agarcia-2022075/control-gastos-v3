@@ -40,7 +40,7 @@
 
         <!-- Sub-menu Items -->
         <div class="sub-menu-container" [class.show]="isTxOpen" id="txSubmenu">
-          <a class="sub-menu-item" routerLink="/dashboard" title="Registrar Gasto">
+          <a class="sub-menu-item" routerLink="/gasto" title="Registrar Gasto">
             <svg style="width:14px; height:14px; stroke:#f43f5e; fill:none; stroke-width:2;" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             <span>Registrar Gasto</span>
           </a>
@@ -65,7 +65,7 @@
         </a>
 
         <span class="nav-group-title">Analítica</span>
-        <a class="sidebar-nav-item" title="Informes & Reportes">
+        <a class="sidebar-nav-item" routerLink="/reportes" routerLinkActive="active" title="Informes & Reportes">
           <span class="nav-item-icon">
             <svg class="svg-icon" viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
           </span>

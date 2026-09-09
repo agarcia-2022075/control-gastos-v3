@@ -1,0 +1,382 @@
+<div class="app-container" [class.collapsed]="isCollapsed" id="appContainer">
+  <!-- Background Abstract Glowing Orbs (User mockup theme) -->
+  <div class="bg-orbs-container" aria-hidden="true">
+    <div class="bg-orb orb-cyan"></div>
+    <div class="bg-orb orb-purple"></div>
+    <div class="bg-orb orb-red"></div>
+    <div class="bg-orb orb-magenta"></div>
+  </div>
+
+  <!-- Left Glassmorphism Sidebar Navigation (Collapsible with Submenu) -->
+  <aside class="app-sidebar" id="appSidebar">
+    <div>
+      <div class="sidebar-brand-box">
+        <div class="brand-icon-wrapper">
+          <img src="logo.jpg" alt="Logo control-gastos" class="brand-logo-img">
+        </div>
+        <span class="brand-name">control<span class="brand-accent">-gastos</span></span>
+      </div>
+
+      <nav class="sidebar-nav">
+        <span class="nav-group-title">Menú Principal</span>
+        
+        <a class="sidebar-nav-item" routerLink="/dashboard" title="Dashboard">
+          <span class="nav-item-icon">
+            <svg class="svg-icon" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="2"/><rect x="14" y="3" width="7" height="5" rx="2"/><rect x="14" y="12" width="7" height="9" rx="2"/><rect x="3" y="16" width="7" height="5" rx="2"/></svg>
+          </span>
+          <span>Dashboard</span>
+        </a>
+
+        <!-- Transacciones Dropdown Header -->
+        <div class="sidebar-nav-item nav-dropdown-toggle open" (click)="toggleTxSubmenu($event)" title="Transacciones">
+          <div style="display:flex; align-items:center; gap:0.85rem;">
+            <span class="nav-item-icon">
+              <svg class="svg-icon" viewBox="0 0 24 24"><path d="M7 10l5-5 5 5M7 14l5 5 5-5"/></svg>
+            </span>
+            <span>Transacciones</span>
+          </div>
+          <svg class="chevron-icon" viewBox="0 0 24 24" fill="none" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+
+        <!-- Sub-menu Items (Solo Registrar Gasto y Registrar Ingreso) -->
+        <div class="sub-menu-container show" id="txSubmenu">
+          <a class="sub-menu-item active-sub" routerLink="/gasto" title="Registrar Gasto">
+            <svg style="width:14px; height:14px; stroke:#f43f5e; fill:none; stroke-width:2;" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <span>Registrar Gasto</span>
+          </a>
+          <a class="sub-menu-item" routerLink="/ingreso" title="Registrar Ingreso">
+            <svg style="width:14px; height:14px; stroke:#34d399; fill:none; stroke-width:2;" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+            <span>Registrar Ingreso</span>
+          </a>
+        </div>
+
+        <a class="sidebar-nav-item" title="Presupuestos">
+          <span class="nav-item-icon">
+            <svg class="svg-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg>
+          </span>
+          <span>Presupuestos</span>
+        </a>
+
+        <a class="sidebar-nav-item" title="Categorías">
+          <span class="nav-item-icon">
+            <svg class="svg-icon" viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+          </span>
+          <span>Categorías</span>
+        </a>
+
+        <span class="nav-group-title">Analítica</span>
+        <a class="sidebar-nav-item" routerLink="/reportes" routerLinkActive="active" title="Informes & Reportes">
+          <span class="nav-item-icon">
+            <svg class="svg-icon" viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+          </span>
+          <span>Informes & Reportes</span>
+        </a>
+      </nav>
+    </div>
+
+    <!-- User Footer in Sidebar -->
+    <div class="sidebar-user-footer" *ngIf="currentUser">
+      <div class="sidebar-user-card">
+        <div class="user-avatar-mini">{{ currentUser.name.charAt(0).toUpperCase() }}</div>
+        <div class="user-info-mini">
+          <span class="user-name-mini">{{ currentUser.name }}</span>
+          <span class="user-email-mini">{{ currentUser.email }}</span>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <div class="main-wrapper">
+    <!-- Topbar Header -->
+    <header class="topbar-header">
+      <div class="topbar-left">
+        <button class="sidebar-toggle-btn" id="toggleBtn" (click)="toggleSidebar()" title="Desplegar / Contraer Menú">
+          <svg style="width:20px; height:20px; stroke:#ffffff; stroke-width:2.2; stroke-linecap:round; fill:none;" viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <span class="page-location-title">Control de Gastos — Registrar Gasto</span>
+      </div>
+      
+      <div class="topbar-actions">
+        <div class="icon-btn" title="Notificaciones">
+          <svg style="width:20px; height:20px; stroke:#ffffff; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; fill:none;" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <span class="notification-dot"></span>
+        </div>
+        <div style="height: 24px; width: 1px; background: rgba(255,255,255,0.15);"></div>
+        <span style="font-size:0.85rem; font-weight:700; color:#34d399; display:flex; align-items:center; gap:0.4rem;">
+          <span style="width:8px; height:8px; border-radius:50%; background:#34d399; box-shadow:0 0 10px #34d399;"></span>
+          Sesión Activa
+        </span>
+        <button class="topbar-logout-shortcut" (click)="logout()" title="Cerrar Sesión">
+          <svg style="width:18px; height:18px; stroke:#fca5a5; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; fill:none;" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          <span>Cerrar Sesión</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Loading State -->
+    <div *ngIf="loading" class="loading-state-box">
+      <div class="spinner-ring"></div>
+      <p>Cargando módulo de gastos...</p>
+    </div>
+
+    <!-- Main View Content -->
+    <div class="view-body" *ngIf="!loading">
+      <div class="view-top-header">
+        <div class="view-title-group">
+          <h1>Registrar Nuevo Gasto</h1>
+          <p>Registra compras, servicios, facturas y pagos operativos en tu presupuesto</p>
+        </div>
+        <a routerLink="/dashboard" class="btn-back-dashboard">
+          <svg style="width:18px; height:18px; stroke:#ffffff; stroke-width:2; fill:none;" viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+          <span>Volver al Dashboard</span>
+        </a>
+      </div>
+
+      <!-- Feedback Banners -->
+      <div *ngIf="successMessage" class="feedback-banner banner-success">
+        <span class="banner-icon">✓</span>
+        <span>{{ successMessage }}</span>
+      </div>
+      <div *ngIf="errorMessage" class="feedback-banner banner-error">
+        <span class="banner-icon">⚠️</span>
+        <span>{{ errorMessage }}</span>
+      </div>
+
+      <!-- 3 Expense KPI Cards -->
+      <div class="expense-kpi-grid" *ngIf="stats">
+        <div class="expense-kpi-card">
+          <div class="kpi-header-row">
+            <span class="kpi-label-text">Gastos del Mes</span>
+            <div class="kpi-icon-box">
+              <svg style="width:20px; height:20px; stroke:#f43f5e; stroke-width:2; fill:none;" viewBox="0 0 24 24"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></svg>
+            </div>
+          </div>
+          <div class="kpi-amount-text">Q {{ stats.gastosMes | number:'1.2-2' }}</div>
+          <div class="kpi-sub-text">Total egresos registrados en el mes</div>
+        </div>
+
+        <div class="expense-kpi-card">
+          <div class="kpi-header-row">
+            <span class="kpi-label-text">Presupuesto Restante</span>
+            <div class="kpi-icon-box" style="background:rgba(56,189,248,0.15); color:#38bdf8; border-color:rgba(56,189,248,0.3);">
+              <svg style="width:20px; height:20px; stroke:#38bdf8; stroke-width:2; fill:none;" viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+            </div>
+          </div>
+          <div class="kpi-amount-text">Q {{ stats.saldoDisponible | number:'1.2-2' }}</div>
+          <div class="kpi-sub-text" style="color:#38bdf8;">Fondo disponible para este mes</div>
+        </div>
+
+        <div class="expense-kpi-card">
+          <div class="kpi-header-row">
+            <span class="kpi-label-text">Mayor Categoría</span>
+            <div class="kpi-icon-box" style="background:rgba(192,132,252,0.15); color:#c084fc; border-color:rgba(192,132,252,0.3);">
+              <svg style="width:20px; height:20px; stroke:#c084fc; stroke-width:2; fill:none;" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+            </div>
+          </div>
+          <div class="kpi-amount-text" style="font-size: 1.5rem;">{{ topExpenseCategory.name }}</div>
+          <div class="kpi-sub-text" style="color:#c084fc;">{{ topExpenseCategory.percentage }}% del total consumido</div>
+        </div>
+      </div>
+
+      <!-- Main 2-Column Grid: Form (Left) & Recent Expenses Table (Right) -->
+      <div class="gasto-main-grid">
+        <!-- Form Panel -->
+        <div class="glass-form-panel">
+          <h2 class="panel-section-title">
+            <div style="display:flex; align-items:center; gap:0.65rem;">
+              <svg style="width:22px; height:22px; fill:none; stroke-width:2;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+              <span>Formulario de Gasto</span>
+            </div>
+          </h2>
+
+          <form (ngSubmit)="onSubmit()">
+            <div class="form-grid">
+              <div class="form-group-full">
+                <label class="form-label">Monto del Gasto (Q) *</label>
+                <div class="input-wrapper">
+                  <span class="currency-prefix">Q</span>
+                  <input type="number" step="0.01" min="0.01" class="glass-input glass-input-currency" placeholder="0.00" [(ngModel)]="monto" name="monto" required>
+                </div>
+              </div>
+
+              <div class="form-group-full">
+                <label class="form-label">Concepto / Comercio o Proveedor *</label>
+                <input type="text" class="glass-input" placeholder="Ej. Servidores AWS Cloud, Supermercado Central..." [(ngModel)]="concepto" name="concepto" required>
+              </div>
+
+              <div>
+                <label class="form-label">Categoría del Gasto *</label>
+                <select class="glass-select" [(ngModel)]="categoria" name="categoria" required>
+                  <option value="" disabled selected>Selecciona una categoría</option>
+                  <option *ngFor="let cat of expenseCategories" [value]="cat">{{ cat }}</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="form-label">Método de Pago / Cuenta</label>
+                <select class="glass-select" [(ngModel)]="cuenta" name="cuenta">
+                  <option value="debito">Tarjeta Débito Principal (**** 4829)</option>
+                  <option value="ahorros">Cuenta de Ahorros BD (**** 9102)</option>
+                  <option value="efectivo">Efectivo en Caja</option>
+                </select>
+              </div>
+
+              <div class="form-group-full">
+                <label class="form-label">Fecha de Realización</label>
+                <input type="date" class="glass-input" [(ngModel)]="fecha" name="fecha" required>
+              </div>
+
+              <div class="form-group-full">
+                <label class="form-label">Notas / Comprobante o No. de Factura (Opcional)</label>
+                <textarea class="glass-textarea" placeholder="Número de autorización, número de factura o detalle del consumo..." [(ngModel)]="notas" name="notas"></textarea>
+              </div>
+            </div>
+
+            <div class="form-actions-row">
+              <a routerLink="/dashboard" class="btn-cancel" style="text-decoration:none; text-align:center;">Cancelar</a>
+              <button type="submit" class="btn-submit-rose" [disabled]="submitting">
+                <svg style="width:18px; height:18px; stroke:#ffffff; stroke-width:2.5; fill:none;" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                <span>{{ submitting ? 'Guardando...' : 'Guardar Gasto' }}</span>
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Recent Expenses Table Panel -->
+        <div class="glass-form-panel">
+          <div class="panel-section-title">
+            <div style="display:flex; align-items:center; gap:0.65rem;">
+              <svg style="width:22px; height:22px; fill:none; stroke-width:2;" viewBox="0 0 24 24"><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/></svg>
+              <span>Últimos Gastos Registrados</span>
+            </div>
+            <span style="font-size:0.8rem; color:#94a3b8; font-weight:600;">Total: {{ filteredExpenses.length }}</span>
+          </div>
+
+          <!-- Live Search -->
+          <div class="table-search-wrapper">
+            <input type="text" class="glass-input" placeholder="🔍 Buscar por comercio, concepto o categoría..." [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()">
+          </div>
+
+          <div class="table-responsive">
+            <table class="expense-table">
+              <thead>
+                <tr>
+                  <th>Comercio / Concepto</th>
+                  <th>Categoría</th>
+                  <th>Fecha</th>
+                  <th>Monto</th>
+                  <th style="text-align: center;">Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let tx of paginatedExpenses">
+                  <td>
+                    <span style="font-weight:700; color:#ffffff; display:block;">{{ tx.title }}</span>
+                    <span style="font-size:0.78rem; color:#94a3b8;">{{ tx.merchant }}</span>
+                  </td>
+                  <td>
+                    <span style="background:rgba(255,255,255,0.04); padding:0.25rem 0.6rem; border-radius:8px; font-size:0.78rem; color:#cbd5e1;">{{ tx.category }}</span>
+                  </td>
+                  <td>{{ tx.date }}</td>
+                  <td class="expense-amount-negative">-Q {{ tx.amount | number:'1.2-2' }}</td>
+                  <td>
+                    <div class="actions-inline-group">
+                      <button class="btn-action-icon btn-edit" (click)="openEditModal(tx, $event)" title="Editar Gasto">
+                        <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                      </button>
+                      <button class="btn-action-icon btn-delete" (click)="openDeleteModal(tx, $event)" title="Eliminar Gasto">
+                        <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                <tr *ngIf="paginatedExpenses.length === 0">
+                  <td colspan="5" style="text-align: center; color: #64748b; padding: 2rem 0;">
+                    No se encontraron gastos registrados.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Pagination -->
+          <div class="table-pagination-footer" *ngIf="filteredExpenses.length > pageSize">
+            <span>Página {{ currentPage }} de {{ totalPages }}</span>
+            <div style="display:flex; gap:0.5rem;">
+              <button class="btn-pagination" (click)="prevPage()" [disabled]="currentPage === 1">Anterior</button>
+              <button class="btn-pagination" (click)="nextPage()" [disabled]="currentPage === totalPages">Siguiente</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <p>&copy; 2026 control-gastos — Módulo de Gestión de Gastos Financieros</p>
+    </footer>
+  </div>
+
+  <!-- Edit Transaction Floating Glassmorphic Modal -->
+  <div class="modal-backdrop-blur" *ngIf="transactionToEdit">
+    <div class="glass-modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">Editar Transacción de Gasto</h3>
+        <button class="btn-modal-close" (click)="cancelEdit()">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <div style="margin-bottom: 1rem;">
+          <label class="form-label">Concepto / Comercio</label>
+          <input type="text" class="glass-input" [(ngModel)]="editTitle">
+        </div>
+
+        <div style="margin-bottom: 1rem;">
+          <label class="form-label">Monto (Q)</label>
+          <input type="number" class="glass-input" step="0.01" min="0.01" [(ngModel)]="editAmount">
+        </div>
+
+        <div style="margin-bottom: 1rem;">
+          <label class="form-label">Categoría</label>
+          <select class="glass-select" [(ngModel)]="editCategory">
+            <option *ngFor="let cat of expenseCategories" [value]="cat">{{ cat }}</option>
+          </select>
+        </div>
+
+        <div style="margin-bottom: 1rem;">
+          <label class="form-label">Fecha</label>
+          <input type="date" class="glass-input" [(ngModel)]="editDate">
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-modal-secondary" (click)="cancelEdit()">Cancelar</button>
+        <button class="btn-modal-primary" (click)="confirmEdit()" [disabled]="editing">
+          {{ editing ? 'Guardando...' : 'Actualizar Gasto' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Confirmation Floating Glassmorphic Modal -->
+  <div class="modal-backdrop-blur" *ngIf="transactionToDelete">
+    <div class="glass-modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title" style="color: #f43f5e;">Confirmar Eliminación</h3>
+        <button class="btn-modal-close" (click)="cancelDelete()">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <p>¿Estás seguro de que deseas eliminar permanentemente el gasto <strong>"{{ transactionToDelete.title }}"</strong> por valor de <strong>Q {{ transactionToDelete.amount | number:'1.2-2' }}</strong>?</p>
+        <p style="color:#94a3b8; font-size:0.85rem; margin-top:0.5rem;">Esta acción restaurará el monto a tu saldo disponible inmediatamente.</p>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-modal-secondary" (click)="cancelDelete()">Cancelar</button>
+        <button class="btn-modal-danger" (click)="confirmDelete()" [disabled]="deleting">
+          {{ deleting ? 'Eliminando...' : 'Sí, Eliminar Gasto' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

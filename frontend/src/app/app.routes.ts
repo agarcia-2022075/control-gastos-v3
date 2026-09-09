@@ -27,6 +27,11 @@ export const routes: Routes = [
     canActivate: [authGuard]
   },
   {
+    path: 'gasto',
+    loadComponent: () => import('./features/gasto/gasto.component').then(m => m.GastoComponent),
+    canActivate: [authGuard]
+  },
+  {
     path: 'admin',
     loadComponent: () => import('./features/admin/admin.component').then(m => m.AdminComponent),
     canActivate: [authGuard, roleGuard]
