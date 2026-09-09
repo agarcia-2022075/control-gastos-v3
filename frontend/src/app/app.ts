@@ -18,6 +18,10 @@ export class App {
   title = 'control-gastos';
 
   isFullLayoutRoute(): boolean {
-    return this.router.url.includes('/dashboard') || this.router.url.includes('/ingreso');
+    const url = this.router.url;
+    return url.includes('/dashboard') || 
+           url.includes('/ingreso') || 
+           url.includes('/gasto') || 
+           url.includes('/admin');
   }
 }

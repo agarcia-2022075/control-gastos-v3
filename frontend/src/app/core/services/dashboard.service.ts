@@ -28,6 +28,7 @@ export interface RecentTransaction {
 }
 
 export interface PaymentAlert {
+  id: number;
   title: string;
   description: string;
   alertType: string;
@@ -77,6 +78,27 @@ export class DashboardService {
     date?: string;
   }): Observable<{ success: boolean; message: string; data?: any }> {
     return this.http.post<{ success: boolean; message: string; data?: any }>(`${this.apiUrl}/incomes`, data);
+  }
+
+  createExpense(data: {
+    title: string;
+    category: string;
+    amount: number;
+    merchant?: string;
+    date?: string;
+  }): Observable<{ success: boolean; message: string; data?: any }> {
+    return this.http.post<{ success: boolean; message: string; data?: any }>(`${this.apiUrl}/expenses`, data);
+  }
+
+  updateSavingsGoal(data: {
+    targetAmount?: number;
+    currentAmount?: number;
+  }): Observable<{ success: boolean; message: string; data?: any }> {
+    return this.http.patch<{ success: boolean; message: string; data?: any }>(`${this.apiUrl}/savings-goal`, data);
+  }
+
+  dismissAlert(id: number): Observable<{ success: boolean; message: string }> {
+    return this.http.patch<{ success: boolean; message: string }>(`${this.apiUrl}/alerts/${id}/dismiss`, {});
   }
 
   updateTransaction(id: number, data: {
