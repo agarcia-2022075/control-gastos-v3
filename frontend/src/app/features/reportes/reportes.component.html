@@ -1,0 +1,434 @@
+<div class="app-container" [class.collapsed]="isCollapsed" id="appContainer">
+  <!-- Background Abstract Glowing Orbs -->
+  <div class="bg-orbs-container" aria-hidden="true">
+    <div class="bg-orb orb-cyan"></div>
+    <div class="bg-orb orb-purple"></div>
+    <div class="bg-orb orb-green"></div>
+    <div class="bg-orb orb-magenta"></div>
+  </div>
+
+  <!-- Left Glassmorphism Sidebar Navigation (Collapsible with Submenu) -->
+  <aside class="app-sidebar" id="appSidebar">
+    <div>
+      <div class="sidebar-brand-box">
+        <div class="brand-icon-wrapper">
+          <img src="logo.jpg" alt="Logo control-gastos" class="brand-logo-img">
+        </div>
+        <span class="brand-name">control<span class="brand-accent">-gastos</span></span>
+      </div>
+
+      <nav class="sidebar-nav">
+        <span class="nav-group-title">Menú Principal</span>
+        
+        <a class="sidebar-nav-item" routerLink="/dashboard" title="Dashboard">
+          <span class="nav-item-icon">
+            <svg class="svg-icon" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="2"/><rect x="14" y="3" width="7" height="5" rx="2"/><rect x="14" y="12" width="7" height="9" rx="2"/><rect x="3" y="16" width="7" height="5" rx="2"/></svg>
+          </span>
+          <span>Dashboard</span>
+        </a>
+
+        <!-- Transacciones Dropdown Header -->
+        <div class="sidebar-nav-item nav-dropdown-toggle" [class.open]="isTxOpen" (click)="toggleTxSubmenu($event)" title="Transacciones">
+          <div style="display:flex; align-items:center; gap:0.85rem;">
+            <span class="nav-item-icon">
+              <svg class="svg-icon" viewBox="0 0 24 24"><path d="M7 10l5-5 5 5M7 14l5 5 5-5"/></svg>
+            </span>
+            <span>Transacciones</span>
+          </div>
+          <svg class="chevron-icon" viewBox="0 0 24 24" fill="none" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+
+        <!-- Sub-menu Items -->
+        <div class="sub-menu-container" [class.show]="isTxOpen" id="txSubmenu">
+          <a class="sub-menu-item" routerLink="/gasto" title="Registrar Gasto">
+            <svg style="width:14px; height:14px; stroke:#f43f5e; fill:none; stroke-width:2;" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <span>Registrar Gasto</span>
+          </a>
+          <a class="sub-menu-item" routerLink="/ingreso" title="Registrar Ingreso">
+            <svg style="width:14px; height:14px; stroke:#34d399; fill:none; stroke-width:2;" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+            <span>Registrar Ingreso</span>
+          </a>
+        </div>
+
+        <a class="sidebar-nav-item" title="Presupuestos">
+          <span class="nav-item-icon">
+            <svg class="svg-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg>
+          </span>
+          <span>Presupuestos</span>
+        </a>
+
+        <a class="sidebar-nav-item" title="Categorías">
+          <span class="nav-item-icon">
+            <svg class="svg-icon" viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+          </span>
+          <span>Categorías</span>
+        </a>
+
+        <span class="nav-group-title">Analítica</span>
+        <a class="sidebar-nav-item active" routerLink="/reportes" title="Informes & Reportes">
+          <span class="nav-item-icon">
+            <svg class="svg-icon" viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+          </span>
+          <span>Informes & Reportes</span>
+        </a>
+
+        <span class="nav-group-title">Sistema</span>
+        <a class="sidebar-nav-item" *ngIf="currentUser?.role === 'ADMIN'" routerLink="/admin" title="Administración">
+          <span class="nav-item-icon">
+            <svg class="svg-icon" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </span>
+          <span>Administración</span>
+        </a>
+        
+        <a class="sidebar-nav-item" title="Configuración">
+          <span class="nav-item-icon">
+            <svg class="svg-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          </span>
+          <span>Configuración</span>
+        </a>
+      </nav>
+    </div>
+
+    <!-- User Profile Pill -->
+    <div class="sidebar-user-footer" *ngIf="currentUser">
+      <div class="sidebar-user-card">
+        <div class="user-avatar-mini">{{ currentUser.name.charAt(0).toUpperCase() }}</div>
+        <div class="user-info-mini">
+          <span class="user-name-mini">{{ currentUser.name }}</span>
+          <span class="user-email-mini">{{ currentUser.email }}</span>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content Wrapper -->
+  <div class="main-wrapper">
+    <!-- Topbar Header -->
+    <header class="topbar-header">
+      <div class="topbar-left">
+        <button class="sidebar-toggle-btn" (click)="toggleSidebar()" title="Desplegar / Contraer Menú">
+          <svg style="width:20px; height:20px; stroke:#ffffff; stroke-width:2.2; stroke-linecap:round; fill:none;" viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <span class="page-location-title">Control de Gastos — Informes & Reportes</span>
+      </div>
+      
+      <div class="topbar-actions">
+        <div class="icon-btn" title="Notificaciones">
+          <svg style="width:20px; height:20px; stroke:#ffffff; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; fill:none;" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <span class="notification-dot"></span>
+        </div>
+        <div style="height: 24px; width: 1px; background: rgba(255,255,255,0.15);"></div>
+        <span style="font-size:0.85rem; font-weight:700; color:#34d399; display:flex; align-items:center; gap:0.4rem;">
+          <span style="width:8px; height:8px; border-radius:50%; background:#34d399; box-shadow:0 0 10px #34d399;"></span>
+          Sesión Activa
+        </span>
+        <button class="topbar-logout-shortcut" (click)="logout()" title="Cerrar Sesión">
+          <svg style="width:18px; height:18px; stroke:#fca5a5; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; fill:none;" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          <span>Cerrar Sesión</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- View Body -->
+    <div class="view-body">
+      <div class="view-top-header">
+        <div class="view-title-group">
+          <h1>Informes & Reportes Financieros</h1>
+          <p>Consolidado ejecutivo, exportación formal y análisis de ingresos vs. egresos</p>
+        </div>
+        <div style="display:flex; align-items:center; gap: 0.75rem;">
+          <a routerLink="/dashboard" class="btn-back-dashboard">
+            <svg style="width:18px; height:18px; stroke:#ffffff; stroke-width:2; fill:none;" viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+            <span>Volver al Dashboard</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Feedback Alerts -->
+      <div *ngIf="errorMessage" class="alert alert-error" role="alert">
+        {{ errorMessage }}
+      </div>
+
+      <!-- 3 KPI Cards Grid (Mismo patrón exacto que ingreso/gasto) -->
+      <div class="income-kpi-grid" *ngIf="stats">
+        <!-- KPI 1: Ingresos -->
+        <div class="income-kpi-card">
+          <div class="kpi-header-row">
+            <span class="kpi-label-text">Ingresos del Período</span>
+            <div class="kpi-icon-box">
+              <svg style="width:20px; height:20px; stroke:#34d399; stroke-width:2; fill:none;" viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+            </div>
+          </div>
+          <div class="kpi-amount-text" style="color: #34d399;">+Q {{ totalIngresos | number:'1.2-2' }}</div>
+          <div class="kpi-sub-text">↑ Total de abonos filtrados</div>
+        </div>
+
+        <!-- KPI 2: Gastos -->
+        <div class="income-kpi-card">
+          <div class="kpi-header-row">
+            <span class="kpi-label-text">Gastos del Período</span>
+            <div class="kpi-icon-box" style="background: rgba(244, 63, 94, 0.15); color: #f43f5e; border-color: rgba(244, 63, 94, 0.3); box-shadow: 0 0 15px rgba(244, 63, 94, 0.2);">
+              <svg style="width:20px; height:20px; stroke:#f43f5e; stroke-width:2; fill:none;" viewBox="0 0 24 24"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></svg>
+            </div>
+          </div>
+          <div class="kpi-amount-text" style="color: #f43f5e;">-Q {{ totalGastos | number:'1.2-2' }}</div>
+          <div class="kpi-sub-text" style="color: #f43f5e;">↓ Total de egresos filtrados</div>
+        </div>
+
+        <!-- KPI 3: Balance Neto -->
+        <div class="income-kpi-card">
+          <div class="kpi-header-row">
+            <span class="kpi-label-text">Balance Neto / Ahorro</span>
+            <div class="kpi-icon-box" [style.background]="balanceNeto >= 0 ? 'rgba(56, 189, 248, 0.15)' : 'rgba(244, 63, 94, 0.15)'" [style.color]="balanceNeto >= 0 ? '#38bdf8' : '#f43f5e'" [style.border-color]="balanceNeto >= 0 ? 'rgba(56, 189, 248, 0.3)' : 'rgba(244, 63, 94, 0.3)'">
+              <svg style="width:20px; height:20px; stroke-width:2; fill:none;" [style.stroke]="balanceNeto >= 0 ? '#38bdf8' : '#f43f5e'" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+            </div>
+          </div>
+          <div class="kpi-amount-text" [style.color]="balanceNeto >= 0 ? '#38bdf8' : '#f43f5e'">
+            {{ balanceNeto >= 0 ? '+' : '' }}Q {{ balanceNeto | number:'1.2-2' }}
+          </div>
+          <div class="kpi-sub-text" [style.color]="balanceNeto >= 0 ? '#38bdf8' : '#f43f5e'">
+            {{ balanceNeto >= 0 ? 'Superávit acumulado (' + tasaAhorro + '% ahorro)' : 'Déficit presupuestario' }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Main 2-Column Grid (Mismo patrón que ingreso-main-grid) -->
+      <div class="ingreso-main-grid">
+        
+        <!-- Left Panel: Filtros de Control y Opciones de Exportación -->
+        <div class="glass-form-panel">
+          <h2 class="panel-section-title">
+            <svg style="width:22px; height:22px; stroke:#38bdf8; fill:none; stroke-width:2;" viewBox="0 0 24 24"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+            Filtros & Rango de Reporte
+          </h2>
+
+          <!-- Rango Rápido con Píldoras -->
+          <div style="margin-bottom: 1.25rem;">
+            <label class="form-label">Período Predefinido</label>
+            <div class="preset-pills-wrap">
+              <button type="button" class="preset-pill-btn" [class.active-pill]="datePreset === 'month'" (click)="setDatePreset('month')">Este Mes</button>
+              <button type="button" class="preset-pill-btn" [class.active-pill]="datePreset === 'prev_month'" (click)="setDatePreset('prev_month')">Mes Anterior</button>
+              <button type="button" class="preset-pill-btn" [class.active-pill]="datePreset === 'quarter'" (click)="setDatePreset('quarter')">Trimestre</button>
+              <button type="button" class="preset-pill-btn" [class.active-pill]="datePreset === 'year'" (click)="setDatePreset('year')">Este Año</button>
+              <button type="button" class="preset-pill-btn" [class.active-pill]="datePreset === 'all'" (click)="setDatePreset('all')">Todo</button>
+              <button type="button" class="preset-pill-btn" [class.active-pill]="datePreset === 'custom'" (click)="setDatePreset('custom')">Personalizado</button>
+            </div>
+          </div>
+
+          <div class="form-grid">
+            <!-- Desde Fecha -->
+            <div>
+              <label class="form-label">Desde Fecha</label>
+              <input type="date" class="glass-input" [(ngModel)]="customStartDate" (change)="onFilterChange()">
+            </div>
+
+            <!-- Hasta Fecha -->
+            <div>
+              <label class="form-label">Hasta Fecha</label>
+              <input type="date" class="glass-input" [(ngModel)]="customEndDate" (change)="onFilterChange()">
+            </div>
+
+            <!-- Tipo de Movimiento -->
+            <div>
+              <label class="form-label">Tipo de Movimiento</label>
+              <select class="glass-select" [(ngModel)]="filterType" (change)="onFilterChange()">
+                <option value="ALL">Todos los Movimientos</option>
+                <option value="INCOME">Solo Ingresos (Abonos)</option>
+                <option value="EXPENSE">Solo Gastos (Egresos)</option>
+              </select>
+            </div>
+
+            <!-- Categoría -->
+            <div>
+              <label class="form-label">Categoría</label>
+              <select class="glass-select" [(ngModel)]="selectedCategory" (change)="onFilterChange()">
+                <option value="ALL">Todas las Categorías</option>
+                <option *ngFor="let cat of availableCategories" [value]="cat">{{ cat }}</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Botones de Acción / Exportación -->
+          <div class="form-actions-row" style="margin-top: 2rem; justify-content: stretch; display: flex; flex-direction: column; gap: 0.75rem;">
+            <button type="button" class="btn-submit-emerald" (click)="exportToPDF()" style="width: 100%; justify-content: center; background: linear-gradient(135deg, #0284c7 0%, #2563eb 50%, #38bdf8 100%); box-shadow: 0 10px 30px rgba(37, 99, 235, 0.4);">
+              <svg style="width:18px; height:18px; stroke:#ffffff; stroke-width:2.2; fill:none;" viewBox="0 0 24 24"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+              <span>Exportar Reporte a PDF / Imprimir</span>
+            </button>
+            <button type="button" class="btn-cancel" (click)="exportToCSV()" style="width: 100%; text-align: center; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+              <svg style="width:18px; height:18px; stroke:#38bdf8; stroke-width:2; fill:none;" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              <span>Descargar Archivo CSV (Excel)</span>
+            </button>
+          </div>
+
+          <!-- Resumen de Concentración por Categorías dentro del panel izquierdo -->
+          <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid rgba(255, 255, 255, 0.1);">
+            <h3 style="font-size: 0.95rem; font-weight: 700; color: #ffffff; margin-bottom: 1rem; display:flex; justify-content:space-between;">
+              <span>Concentración por Categoría</span>
+              <span style="font-size: 0.8rem; color: #94a3b8;">{{ categoryBreakdown.length }} activas</span>
+            </h3>
+
+            <div style="display:flex; flex-direction: column; gap: 0.85rem;">
+              <div *ngFor="let item of categoryBreakdown.slice(0, 5)">
+                <div style="display:flex; justify-content:space-between; font-size: 0.82rem; margin-bottom: 0.3rem;">
+                  <span style="color: #cbd5e1; font-weight: 600;">{{ item.name }}</span>
+                  <span style="color: #ffffff; font-weight: 700;">Q {{ item.amount | number:'1.2-2' }} ({{ item.percentage }}%)</span>
+                </div>
+                <div style="width: 100%; height: 5px; background: rgba(255,255,255,0.08); border-radius: 3px; overflow:hidden;">
+                  <div [style.width.%]="item.percentage" [style.background-color]="item.color" style="height: 100%; border-radius: 3px;"></div>
+                </div>
+              </div>
+
+              <div *ngIf="categoryBreakdown.length === 0" style="color: #64748b; font-size: 0.82rem; text-align: center; padding: 1rem 0;">
+                No hay movimientos registrados en este rango.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Panel: Tabla Consolidada de Transacciones Filtradas -->
+        <div class="glass-form-panel">
+          <div class="table-header-row">
+            <h2 class="panel-section-title" style="margin-bottom:0;">
+              <svg style="width:22px; height:22px; stroke:#38bdf8; fill:none; stroke-width:2;" viewBox="0 0 24 24"><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/></svg>
+              Movimientos del Informe
+            </h2>
+
+            <!-- Buscador en Vivo en la Tabla -->
+            <div class="table-search-box" style="width: 220px;">
+              <input type="text" class="glass-search-input" placeholder="🔍 Filtrar registros..." [(ngModel)]="searchTerm" (ngModelChange)="onFilterChange()">
+            </div>
+          </div>
+
+          <div class="table-responsive" style="margin-top: 1.25rem;">
+            <table class="income-table">
+              <thead>
+                <tr>
+                  <th>Concepto / Comercio</th>
+                  <th>Categoría</th>
+                  <th>Fecha</th>
+                  <th>Tipo</th>
+                  <th style="text-align: right;">Monto</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let tx of paginatedTransactions">
+                  <td>
+                    <span style="font-weight:700; color:#ffffff; display:block;">{{ tx.title }}</span>
+                    <span style="font-size:0.78rem; color:#94a3b8;">{{ tx.merchant || 'General' }}</span>
+                  </td>
+                  <td>
+                    <span style="background:rgba(255,255,255,0.04); padding:0.25rem 0.6rem; border-radius:8px; font-size:0.78rem; color:#cbd5e1;">
+                      {{ tx.category }}
+                    </span>
+                  </td>
+                  <td style="font-size: 0.82rem; color: #94a3b8; white-space: nowrap;">{{ tx.date }}</td>
+                  <td>
+                    <span [style.background]="tx.type === 'INCOME' ? 'rgba(52, 211, 153, 0.15)' : 'rgba(244, 63, 94, 0.15)'"
+                          [style.color]="tx.type === 'INCOME' ? '#34d399' : '#f43f5e'"
+                          [style.border]="tx.type === 'INCOME' ? '1px solid rgba(52, 211, 153, 0.3)' : '1px solid rgba(244, 63, 94, 0.3)'"
+                          style="padding: 0.2rem 0.5rem; border-radius: 6px; font-size: 0.72rem; font-weight: 700;">
+                      {{ tx.type === 'INCOME' ? '+ Ingreso' : '- Gasto' }}
+                    </span>
+                  </td>
+                  <td [class.income-amount-positive]="tx.type === 'INCOME'"
+                      [class.expense-amount-negative]="tx.type === 'EXPENSE'"
+                      style="text-align: right;">
+                    {{ tx.type === 'INCOME' ? '+' : '-' }}Q {{ tx.amount | number:'1.2-2' }}
+                  </td>
+                </tr>
+
+                <tr *ngIf="filteredTransactions.length === 0">
+                  <td colspan="5" style="text-align: center; padding: 2.5rem 1rem; color: #94a3b8;">
+                    No se encontraron transacciones que coincidan con los filtros seleccionados.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Paginación de Tabla (Idéntica a ingreso/gasto) -->
+          <div class="pagination-footer" *ngIf="filteredTransactions.length > 0">
+            <span class="pagination-info">
+              Página {{ currentPage }} de {{ totalPages }} ({{ filteredTransactions.length }} movimientos)
+            </span>
+            <div class="pagination-buttons">
+              <button class="btn-page" (click)="prevPage()" [disabled]="currentPage === 1">‹ Anterior</button>
+              <button class="btn-page" (click)="nextPage()" [disabled]="currentPage === totalPages">Siguiente ›</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <p>&copy; 2026 control-gastos — Módulo de Informes & Reportes Financieros</p>
+    </footer>
+  </div>
+
+  <!-- PRINT TEMPLATE FOR PDF EXPORT -->
+  <div class="print-container">
+    <div class="print-header">
+      <div class="print-header-brand">
+        <h1>CONTROL DE GASTOS V3</h1>
+        <p>Informe Financiero y Estado Consolidado de Cuenta</p>
+      </div>
+      <div class="print-header-meta">
+        <p><strong>Generado por:</strong> {{ currentUser?.name }}</p>
+        <p><strong>Correo:</strong> {{ currentUser?.email }}</p>
+        <p><strong>Fecha de Emisión:</strong> {{ emissionDate }}</p>
+        <p><strong>Filtro Aplicado:</strong> {{ filterAppliedLabel }}</p>
+      </div>
+    </div>
+
+    <div class="print-summary-grid">
+      <div class="print-box">
+        <span>Total Ingresos</span>
+        <h3>Q {{ totalIngresos | number:'1.2-2' }}</h3>
+      </div>
+      <div class="print-box">
+        <span>Total Gastos</span>
+        <h3>Q {{ totalGastos | number:'1.2-2' }}</h3>
+      </div>
+      <div class="print-box">
+        <span>Balance Neto</span>
+        <h3>Q {{ balanceNeto | number:'1.2-2' }}</h3>
+      </div>
+      <div class="print-box">
+        <span>Tasa de Ahorro</span>
+        <h3>{{ tasaAhorro }}%</h3>
+      </div>
+    </div>
+
+    <h2 style="font-size: 1.1rem; margin: 1.5rem 0 0.5rem 0; border-bottom: 2px solid #000; padding-bottom: 0.25rem;">
+      Detalle de Transacciones ({{ filteredTransactions.length }} registros)
+    </h2>
+    <table class="print-table">
+      <thead>
+        <tr>
+          <th>Fecha</th>
+          <th>Tipo</th>
+          <th>Concepto</th>
+          <th>Categoría</th>
+          <th>Comercio</th>
+          <th style="text-align: right;">Monto (Q)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let tx of filteredTransactions">
+          <td>{{ tx.date }}</td>
+          <td>{{ tx.type === 'INCOME' ? 'INGRESO' : 'GASTO' }}</td>
+          <td>{{ tx.title }}</td>
+          <td>{{ tx.category }}</td>
+          <td>{{ tx.merchant || 'General' }}</td>
+          <td style="text-align: right;">{{ tx.amount | number:'1.2-2' }}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="print-footer">
+      <p>Reporte generado automáticamente por la plataforma Control de Gastos v3 — Documento oficial de auditoría personal.</p>
+    </div>
+  </div>
+</div>

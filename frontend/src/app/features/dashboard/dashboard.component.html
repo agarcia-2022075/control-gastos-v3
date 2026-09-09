@@ -40,7 +40,7 @@
 
         <!-- Sub-menu Items -->
         <div class="sub-menu-container" [class.show]="isTxOpen" id="txSubmenu">
-          <a class="sub-menu-item" routerLink="/dashboard" title="Registrar Gasto">
+          <a class="sub-menu-item" routerLink="/gasto" title="Registrar Gasto">
             <svg style="width:14px; height:14px; stroke:#f43f5e; fill:none; stroke-width:2;" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             <span>Registrar Gasto</span>
           </a>
@@ -65,7 +65,7 @@
         </a>
 
         <span class="nav-group-title">Analítica</span>
-        <a class="sidebar-nav-item" title="Informes & Reportes">
+        <a class="sidebar-nav-item" routerLink="/reportes" routerLinkActive="active" title="Informes & Reportes">
           <span class="nav-item-icon">
             <svg class="svg-icon" viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
           </span>
@@ -151,15 +151,15 @@
             <p class="greeting-subtitle">Resumen general de tus finanzas personales y presupuesto del mes de Agosto 2026</p>
           </div>
           <div class="quick-actions-group">
-            <button class="btn-action-primary">
+            <a class="btn-action-primary" routerLink="/gasto" style="text-decoration: none;">
               <svg style="width:18px; height:18px; stroke:#ffffff; stroke-width:2.5; stroke-linecap:round; fill:none;" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
               <span>Registrar Gasto</span>
-            </button>
+            </a>
             <a class="btn-action-secondary" routerLink="/ingreso" style="text-decoration: none;">
               <svg style="width:18px; height:18px; stroke:#ffffff; stroke-width:2; stroke-linecap:round; fill:none;" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
               <span>Añadir Ingreso</span>
             </a>
-            <button class="btn-action-secondary">
+            <button class="btn-action-secondary" (click)="exportToPDF()" title="Imprimir o guardar estado de cuenta en PDF">
               <svg style="width:18px; height:18px; stroke:#ffffff; stroke-width:2; stroke-linecap:round; fill:none;" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><polyline points="9 15 12 18 15 15"/></svg>
               <span>Exportar PDF</span>
             </button>
@@ -210,7 +210,7 @@
             </div>
           </div>
 
-          <div class="kpi-card">
+          <div class="kpi-card" style="cursor: pointer;" (click)="openEditGoalModal()" title="Haga clic para editar su meta de ahorro">
             <div class="kpi-header">
               <span class="kpi-title">Meta de Ahorro</span>
               <div class="kpi-icon-box kpi-icon-purple">
@@ -218,9 +218,12 @@
               </div>
             </div>
             <div class="kpi-value">Q {{ stats.metaAhorro.current | number:'1.2-2' }}</div>
-            <div class="kpi-footer">
-              <span style="color:#c084fc; font-weight:700;">{{ stats.metaAhorro.percentage }}% completado</span>
-              <span style="color:#64748b;">Meta: Q {{ stats.metaAhorro.target | number:'1.0-0' }}</span>
+            <div class="kpi-footer" style="display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <span style="color:#c084fc; font-weight:700;">{{ stats.metaAhorro.percentage }}%</span>
+                <span style="color:#64748b; margin-left: 0.35rem;">de Q {{ stats.metaAhorro.target | number:'1.0-0' }}</span>
+              </div>
+              <span style="font-size:0.75rem; color:#c084fc; text-decoration:underline;">Editar</span>
             </div>
           </div>
         </div>
@@ -514,14 +517,19 @@
                 <span style="font-size:0.8rem; color:#fbbf24;">{{ stats.alertas.length }} Activas</span>
               </h3>
               
-              <div class="alert-box-item" *ngFor="let alert of stats.alertas">
-                <div class="alert-box-icon">
-                  <svg style="width:20px; height:20px; stroke:#fbbf24; stroke-width:2; fill:none;" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              <div class="alert-box-item" *ngFor="let alert of stats.alertas" style="display: flex; justify-content: space-between; align-items: center;">
+                <div style="display: flex; gap: 0.75rem; align-items: flex-start;">
+                  <div class="alert-box-icon">
+                    <svg style="width:20px; height:20px; stroke:#fbbf24; stroke-width:2; fill:none;" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                  </div>
+                  <div>
+                    <h4 class="alert-box-title">{{ alert.title }}</h4>
+                    <p class="alert-box-desc">{{ alert.description }}</p>
+                  </div>
                 </div>
-                <div>
-                  <h4 class="alert-box-title">{{ alert.title }}</h4>
-                  <p class="alert-box-desc">{{ alert.description }}</p>
-                </div>
+                <button (click)="dismissAlert(alert.id)" class="btn-dismiss-alert" title="Marcar como atendida / Resolver" style="background: rgba(52, 211, 153, 0.15); border: 1px solid rgba(52, 211, 153, 0.3); color: #34d399; border-radius: 8px; padding: 0.35rem 0.65rem; font-size: 0.75rem; cursor: pointer; white-space: nowrap; margin-left: 0.5rem; transition: all 0.2s ease;">
+                  ✓ Resolver
+                </button>
               </div>
 
               <div *ngIf="stats.alertas.length === 0" style="background: rgba(52, 211, 153, 0.08); border: 1px solid rgba(52, 211, 153, 0.25); border-radius: 14px; padding: 0.9rem; font-size: 0.85rem; color: #6ee7b7; display: flex; align-items: center; gap: 0.5rem;">
@@ -540,5 +548,34 @@
     <footer class="app-footer">
       <p>&copy; 2026 control-gastos — Plataforma de Gestión Financiera Personal</p>
     </footer>
+  </div>
+
+  <!-- Savings Goal Floating Glassmorphic Modal -->
+  <div class="modal-backdrop-blur" *ngIf="isGoalModalOpen" style="position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(7,9,24,0.75); backdrop-filter:blur(12px); display:flex; align-items:center; justify-content:center; z-index:9999;">
+    <div class="glass-modal-card" style="background:rgba(15,20,45,0.85); border:1px solid rgba(192,132,252,0.3); border-radius:24px; padding:2rem; width:90%; max-width:480px; box-shadow:0 25px 50px rgba(0,0,0,0.5);">
+      <div class="modal-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+        <h3 class="modal-title" style="color:#c084fc; font-size:1.25rem; font-weight:700; margin:0;">Configurar Meta de Ahorro</h3>
+        <button class="btn-modal-close" (click)="cancelEditGoal()" style="background:none; border:none; color:#94a3b8; font-size:1.2rem; cursor:pointer;">✕</button>
+      </div>
+
+      <div class="modal-body" style="display:flex; flex-direction:column; gap:1.25rem;">
+        <div class="form-group">
+          <label style="display:block; margin-bottom:0.4rem; font-size:0.88rem; color:#cbd5e1;">Monto Meta Total (Q)</label>
+          <input type="number" class="glass-search-input" style="width:100%; padding:0.75rem 1rem; border-radius:12px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.15); color:#fff; font-size:1rem;" step="100" min="1" [(ngModel)]="editTargetGoal" placeholder="Ej: 10000">
+        </div>
+
+        <div class="form-group">
+          <label style="display:block; margin-bottom:0.4rem; font-size:0.88rem; color:#cbd5e1;">Ahorro Acumulado Actual (Q)</label>
+          <input type="number" class="glass-search-input" style="width:100%; padding:0.75rem 1rem; border-radius:12px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.15); color:#fff; font-size:1rem;" step="100" min="0" [(ngModel)]="editCurrentGoal" placeholder="Ej: 5000">
+        </div>
+      </div>
+
+      <div class="modal-footer" style="display:flex; justify-content:flex-end; gap:0.75rem; margin-top:1.75rem;">
+        <button (click)="cancelEditGoal()" style="background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.15); color:#cbd5e1; border-radius:12px; padding:0.65rem 1.25rem; font-weight:600; cursor:pointer;">Cancelar</button>
+        <button (click)="saveSavingsGoal()" [disabled]="updatingGoal" style="background:linear-gradient(135deg, #9333ea 0%, #c084fc 100%); border:none; color:#fff; border-radius:12px; padding:0.65rem 1.5rem; font-weight:700; cursor:pointer; box-shadow:0 4px 15px rgba(192,132,252,0.4);">
+          {{ updatingGoal ? 'Guardando...' : 'Guardar Meta' }}
+        </button>
+      </div>
+    </div>
   </div>
 </div>

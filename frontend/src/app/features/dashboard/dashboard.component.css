@@ -1419,3 +1419,79 @@
   background-color: #0f172a;
   color: #ffffff;
 }
+
+/* ===================================================
+   PRINT STYLESHEET FOR DASHBOARD PDF EXPORT
+   =================================================== */
+@media print {
+  @page {
+    size: letter landscape;
+    margin: 1cm;
+  }
+
+  body, html, .app-container {
+    background: #ffffff !important;
+    color: #111827 !important;
+    overflow: visible !important;
+    display: block !important;
+  }
+
+  .bg-orbs-container,
+  .sidebar-panel,
+  .topbar-header,
+  .quick-actions-group,
+  .modal-overlay,
+  .pagination-controls,
+  .table-pagination-footer {
+    display: none !important;
+  }
+
+  .main-wrapper {
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .dashboard-body {
+    padding: 0 !important;
+  }
+
+  .kpi-card,
+  .main-glass-panel,
+  .side-glass-panel,
+  .table-glass-card {
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: none !important;
+    color: #000000 !important;
+  }
+
+  .kpi-value,
+  .greeting-title,
+  .panel-section-title {
+    color: #000000 !important;
+    -webkit-text-fill-color: #000000 !important;
+  }
+
+  .greeting-subtitle,
+  .kpi-title,
+  .kpi-subtext {
+    color: #4b5563 !important;
+  }
+
+  .glass-table {
+    border: 1px solid #cbd5e1 !important;
+  }
+
+  .glass-table th {
+    background: #f1f5f9 !important;
+    color: #1e293b !important;
+    border-bottom: 2px solid #94a3b8 !important;
+  }
+
+  .glass-table td {
+    border-bottom: 1px solid #e2e8f0 !important;
+    color: #334155 !important;
+  }
+}
+

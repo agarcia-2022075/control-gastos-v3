@@ -22,6 +22,7 @@ export class App {
     return url.includes('/dashboard') || 
            url.includes('/ingreso') || 
            url.includes('/gasto') || 
+           url.includes('/reportes') || 
            url.includes('/admin');
   }
 }
