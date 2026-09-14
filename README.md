@@ -5,12 +5,13 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Angular-19.0-DD0031?style=for-the-badge&logo=angular&logoColor=white" alt="Angular 19">
-  <img src="https://img.shields.io/badge/Node.js-20.x-339933?style=for-the-badge&logo=node.js&logoColor=white" alt="Node.js">
-  <img src="https://img.shields.io/badge/Express-4.x-000000?style=for-the-badge&logo=express&logoColor=white" alt="Express">
-  <img src="https://img.shields.io/badge/PostgreSQL-15+-4169E1?style=for-the-badge&logo=postgresql&logoColor=white" alt="PostgreSQL">
-  <img src="https://img.shields.io/badge/TypeScript-5.x-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript">
-  <img src="https://img.shields.io/badge/pnpm-9.x-F69220?style=for-the-badge&logo=pnpm&logoColor=white" alt="pnpm">
+  <img src="https://img.shields.io/badge/Angular-22.1-DD0031?style=for-the-badge&logo=angular&logoColor=white" alt="Angular 22">
+  <img src="https://img.shields.io/badge/Node.js-22.x-339933?style=for-the-badge&logo=node.js&logoColor=white" alt="Node.js 22">
+  <img src="https://img.shields.io/badge/Express-4.21-000000?style=for-the-badge&logo=express&logoColor=white" alt="Express 4">
+  <br>
+  <img src="https://img.shields.io/badge/PostgreSQL-15+-4169E1?style=for-the-badge&logo=postgresql&logoColor=white" alt="PostgreSQL 15+">
+  <img src="https://img.shields.io/badge/TypeScript-5.7+-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript">
+  <img src="https://img.shields.io/badge/pnpm-11.x-F69220?style=for-the-badge&logo=pnpm&logoColor=white" alt="pnpm 11">
 </p>
 
 ---
@@ -40,7 +41,7 @@ Incorpora además adaptaciones normativas financieras y laborales regionales (es
 ### ✨ Aspectos Clave
 - **Autenticación Robusta & Rate Limiting**: Cifrado con Bcrypt (10 rondas), JSON Web Tokens (JWT) con expiración configurable y protección contra ataques de fuerza bruta vía `express-rate-limit`.
 - **Persistencia Transaccional PostgreSQL**: Arquitectura con `pg.Pool`, transacciones ACID seguras (`BEGIN`, `COMMIT`, `ROLLBACK`) y scripts automatizados de migración y siembra de datos.
-- **Frontend Reactivo con Angular Signals**: Manejo del estado centralizado y reactivo mediante Standalone Components e interceptores HTTP nativos.
+- **Frontend Reactivo con Angular Signals**: Manejo del estado centralizado y reactivo mediante Standalone Components e interceptores HTTP nativos sobre Angular 22.
 - **Visualización Analítica Matemática**: Gráficos SVG interactivos calculados matemáticamente (donas porcentuales, curvas de spline cúbico de tendencias con resplandor neón).
 - **Control Presupuestario en Tiempo Real**: Cálculo automático de umbrales preventivos al 80% y 100% de ejecución presupuestaria.
 - **Motor Salarial y Prestaciones de Ley**: Estimación algorítmica de pasivos laborales anuales basados en salario nominal.
@@ -53,7 +54,7 @@ Incorpora además adaptaciones normativas financieras y laborales regionales (es
 ```text
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │                          CAPA DE PRESENTACIÓN (FRONTEND)                    │
-│  - Angular 19 (Standalone Components, Signals, Reactive Forms, Router)       │
+│  - Angular 22 (Standalone Components, Signals, Reactive Forms, Router)      │
 │  - Estética Glassmorphism 4K (Backdrop-filter blur, CSS Custom Properties)  │
 │  - Motor de Gráficos SVG Paramétricos (Spline Cúbico, Donut Multi-segmento)  │
 │  - Generación de Informes PDF (jsPDF + AutoTable)                           │
@@ -63,7 +64,7 @@ Incorpora además adaptaciones normativas financieras y laborales regionales (es
                                        ▼
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │                            CAPA DE APLICACIÓN (BACKEND)                     │
-│  - Node.js 20.x & Express 4.x (TypeScript 5.x / ESM)                        │
+│  - Node.js 22.x & Express 4.21+ (TypeScript 5.7+ / ESM)                     │
 │  - Seguridad Perimetral (Helmet, CORS Strict Whitelisting, Rate Limiter)    │
 │  - Middlewares de Autenticación (JWT Verify) y Autorización RBAC            │
 │  - Módulos de Dominio: Auth, Users, Dashboard, Tarjetas, Metas, Reportes    │
@@ -158,7 +159,7 @@ erDiagram
     users {
         int id PK
         varchar name
-        varchar email UK
+        varchar email
         varchar password
         varchar role
         varchar avatar_url
@@ -213,7 +214,7 @@ erDiagram
         varchar category
         numeric amount
         varchar status
-        date date
+        date transaction_date
         text notes
         boolean is_recurring
         timestamp created_at
@@ -258,6 +259,20 @@ erDiagram
         timestamp created_at
     }
 ```
+
+> 💡 **Nota de Compatibilidad**: GitHub renderiza los diagramas Mermaid dinámicamente mediante el servicio `viewscreen.githubusercontent.com`. Si experimenta el mensaje *"Unable to render rich display / Loading chunk failed"*, se debe habitualmente al bloqueo de scripts de terceros por extensiones del navegador (adblockers/Brave Shields) o a la caché de sesión. Puede realizar una recarga forzada con <kbd>Ctrl</kbd> + <kbd>F5</kbd> o consultar el resumen de relaciones a continuación:
+
+### 🧩 Resumen de Relaciones y Entidades
+
+| Entidad Principal | Cardinalidad | Entidad Relacionada | Descripción de la Relación |
+|---|:---:|---|---|
+| `users` | `1 : N` | `categories` | Un usuario gestiona su propio catálogo de categorías de ingresos y egresos. |
+| `users` | `1 : N` | `cards_accounts` | Un usuario registra múltiples tarjetas de crédito o cuentas de débito. |
+| `users` | `1 : N` | `transactions` | Un usuario registra el historial cronológico de todas sus transacciones. |
+| `users` | `1 : N` | `savings_goals` | Un usuario establece metas de ahorro con fecha y monto objetivo. |
+| `users` | `1 : N` | `recurring_expenses` | Un usuario programa gastos fijos recurrentes mensuales. |
+| `users` | `1 : N` | `payment_alerts` | Un usuario recibe alertas financieras (presupuesto al 80%, fechas de corte). |
+| `cards_accounts` | `0/1 : N` | `transactions` | Una transacción de gasto puede asociarse a una tarjeta o medio de pago específico. |
 
 ---
 
@@ -410,8 +425,8 @@ control-gastos-v3/
 ## ⚙️ Guía de Instalación y Puesta en Marcha
 
 ### Prerrequisitos
-- **Node.js**: v20.x o superior
-- **pnpm**: v9.x o superior (`npm install -g pnpm`)
+- **Node.js**: v22.x o superior
+- **pnpm**: v11.x o superior (`npm install -g pnpm`)
 - **PostgreSQL**: Instancia activa local o en la nube (v15+)
 
 ---
