@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterOutlet, RouterLink, RouterLinkActive, Router } from '@angular/router';
 import { AuthService } from './core/services/auth.service';
 import { SessionService } from './core/services/session.service';
+import { ToastService } from './core/services/toast.service';
 
 @Component({
   selector: 'app-root',
@@ -14,6 +15,7 @@ import { SessionService } from './core/services/session.service';
 export class App {
   authService = inject(AuthService);
   sessionService = inject(SessionService);
+  toastService = inject(ToastService);
   router = inject(Router);
   title = 'control-gastos';
 
@@ -23,6 +25,9 @@ export class App {
            url.includes('/ingreso') || 
            url.includes('/gasto') || 
            url.includes('/reportes') || 
-           url.includes('/admin');
+           url.includes('/presupuestos') || 
+           url.includes('/configuracion') || 
+           url.includes('/admin') ||
+           (!url.includes('/login') && !url.includes('/register') && url !== '/');
   }
 }
