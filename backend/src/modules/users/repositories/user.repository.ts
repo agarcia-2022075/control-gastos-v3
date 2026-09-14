@@ -9,6 +9,7 @@ export class UserRepository {
         name, 
         email, 
         role, 
+        avatar_url AS "avatarUrl",
         created_at AS "createdAt", 
         updated_at AS "updatedAt"
       FROM users
@@ -26,6 +27,7 @@ export class UserRepository {
         email, 
         password,
         role, 
+        avatar_url AS "avatarUrl",
         created_at AS "createdAt", 
         updated_at AS "updatedAt"
       FROM users
@@ -42,6 +44,7 @@ export class UserRepository {
         name, 
         email, 
         role, 
+        avatar_url AS "avatarUrl",
         created_at AS "createdAt", 
         updated_at AS "updatedAt"
       FROM users
@@ -51,21 +54,40 @@ export class UserRepository {
     return result.rows[0] || null;
   }
 
-  async create(data: { name: string; email: string; passwordHash: string; role?: UserRole }): Promise<UserResponse> {
+  async create(data: { name: string; email: string; passwordHash: string; role?: UserRole; avatarUrl?: string }): Promise<UserResponse> {
     const role = data.role || 'USER';
     const query = `
-      INSERT INTO users (name, email, password, role)
-      VALUES ($1, $2, $3, $4)
+      INSERT INTO users (name, email, password, role, avatar_url)
+      VALUES ($1, $2, $3, $4, $5)
       RETURNING 
         id, 
         name, 
         email, 
         role, 
+        avatar_url AS "avatarUrl",
         created_at AS "createdAt", 
         updated_at AS "updatedAt"
     `;
-    const result = await pool.query<UserResponse>(query, [data.name, data.email, data.passwordHash, role]);
+    const result = await pool.query<UserResponse>(query, [data.name, data.email, data.passwordHash, role, data.avatarUrl || null]);
     return result.rows[0];
+  }
+
+  async updateAvatar(id: number, avatarUrl: string): Promise<UserResponse | null> {
+    const query = `
+      UPDATE users
+      SET avatar_url = $1, updated_at = NOW()
+      WHERE id = $2
+      RETURNING 
+        id, 
+        name, 
+        email, 
+        role, 
+        avatar_url AS "avatarUrl",
+        created_at AS "createdAt", 
+        updated_at AS "updatedAt"
+    `;
+    const result = await pool.query<UserResponse>(query, [avatarUrl, id]);
+    return result.rows[0] || null;
   }
 
   async updateRole(id: number, role: UserRole): Promise<UserResponse | null> {
@@ -78,6 +100,7 @@ export class UserRepository {
         name, 
         email, 
         role, 
+        avatar_url AS "avatarUrl",
         created_at AS "createdAt", 
         updated_at AS "updatedAt"
     `;
