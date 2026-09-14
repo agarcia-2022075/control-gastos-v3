@@ -10,6 +10,7 @@ export interface UserResponse {
   name: string;
   email: string;
   role: 'USER' | 'ADMIN';
+  avatarUrl?: string;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -47,7 +48,7 @@ export class AuthService {
       );
   }
 
-  googleLogin(data: string | { credential?: string; email?: string; name?: string }): Observable<{ success: boolean; message: string; data: AuthResponse }> {
+  googleLogin(data: string | { credential?: string; email?: string; name?: string; picture?: string }): Observable<{ success: boolean; message: string; data: AuthResponse }> {
     const payload = typeof data === 'string' ? { credential: data } : data;
     return this.http.post<{ success: boolean; message: string; data: AuthResponse }>(`${this.apiUrl}/auth/google`, payload)
       .pipe(
@@ -99,7 +100,7 @@ export class AuthService {
   }
 
   isAdmin(): boolean {
-    return this.currentUserData?.role === 'ADMIN';
+    return false;
   }
 
   logout(): void {
