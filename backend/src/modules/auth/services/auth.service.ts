@@ -83,6 +83,7 @@ export class AuthService {
       name: user.name,
       email: user.email,
       role: user.role,
+      avatarUrl: user.avatarUrl,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt
     };
@@ -94,10 +95,11 @@ export class AuthService {
   }
 
   async googleLogin(data: GoogleLoginRequest): Promise<AuthResponse> {
-    const { credential, email, name } = data;
+    const { credential, email, name, picture } = data;
 
     let userEmail: string = '';
     let userName: string = '';
+    let userPicture: string = picture || '';
 
     if (credential && typeof credential === 'string') {
       // 1. Verify with google-auth-library
@@ -110,6 +112,9 @@ export class AuthService {
         if (googlePayload && googlePayload.email) {
           userEmail = googlePayload.email;
           userName = googlePayload.name || googlePayload.email.split('@')[0];
+          if (googlePayload.picture) {
+            userPicture = googlePayload.picture;
+          }
         }
       } catch (verifyErr) {
         // 2. Fallback attempt with Google tokeninfo endpoint
@@ -120,6 +125,9 @@ export class AuthService {
             if (info && info.email) {
               userEmail = info.email;
               userName = info.name || info.email.split('@')[0];
+              if (info.picture) {
+                userPicture = info.picture;
+              }
             }
           }
         } catch {
@@ -156,7 +164,8 @@ export class AuthService {
         name: (userName || normalizedEmail.split('@')[0]).trim(),
         email: normalizedEmail,
         passwordHash,
-        role: 'USER'
+        role: 'USER',
+        avatarUrl: userPicture || undefined
       });
 
       user = {
@@ -165,9 +174,14 @@ export class AuthService {
         email: createdUser.email,
         password: passwordHash,
         role: createdUser.role,
+        avatarUrl: createdUser.avatarUrl,
         createdAt: createdUser.createdAt,
         updatedAt: createdUser.updatedAt
       };
+    } else if (userPicture && user.avatarUrl !== userPicture) {
+      // Si el usuario ya existe y Google trae una foto nueva o no la tenía, la actualizamos en BD
+      await this.userRepo.updateAvatar(user.id, userPicture);
+      user.avatarUrl = userPicture;
     }
 
     // 3. Si existe (o recién creada), lo deja pasar como usuario emitiendo el JWT
@@ -186,6 +200,7 @@ export class AuthService {
       name: user.name,
       email: user.email,
       role: user.role,
+      avatarUrl: user.avatarUrl,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt
     };

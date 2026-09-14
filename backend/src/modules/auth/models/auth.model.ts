@@ -15,6 +15,7 @@ export interface GoogleLoginRequest {
   credential?: string;
   email?: string;
   name?: string;
+  picture?: string;
 }
 
 export interface AuthResponse {
