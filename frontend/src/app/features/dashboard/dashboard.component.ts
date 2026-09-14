@@ -433,6 +433,78 @@ export class DashboardComponent implements OnInit {
     this.cdr.detectChanges();
   }
 
+  // Savings Goal Modal State
+  isGoalModalOpen: boolean = false;
+  editTargetGoal: number = 10000;
+  editCurrentGoal: number = 0;
+  updatingGoal: boolean = false;
+
+  openEditGoalModal(): void {
+    if (this.stats?.metaAhorro) {
+      this.editTargetGoal = this.stats.metaAhorro.target;
+      this.editCurrentGoal = this.stats.metaAhorro.current;
+    }
+    this.isGoalModalOpen = true;
+    this.cdr.detectChanges();
+  }
+
+  cancelEditGoal(): void {
+    this.isGoalModalOpen = false;
+    this.cdr.detectChanges();
+  }
+
+  saveSavingsGoal(): void {
+    if (this.editTargetGoal <= 0) {
+      this.errorMessage = 'El objetivo de ahorro debe ser mayor a 0.';
+      return;
+    }
+    if (this.editCurrentGoal < 0) {
+      this.errorMessage = 'El monto actual no puede ser negativo.';
+      return;
+    }
+
+    this.updatingGoal = true;
+    this.dashboardService.updateSavingsGoal({
+      targetAmount: Number(this.editTargetGoal),
+      currentAmount: Number(this.editCurrentGoal)
+    }).subscribe({
+      next: (res) => {
+        this.updatingGoal = false;
+        this.isGoalModalOpen = false;
+        if (res.success) {
+          this.successMessage = '¡Meta de ahorro actualizada exitosamente!';
+          this.fetchStats();
+        }
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        this.updatingGoal = false;
+        this.errorMessage = err.error?.message || 'Error al actualizar la meta de ahorro.';
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  dismissAlert(alertId: number): void {
+    this.dashboardService.dismissAlert(alertId).subscribe({
+      next: (res) => {
+        if (res.success) {
+          this.successMessage = 'Alerta marcada como resuelta.';
+          this.fetchStats();
+        }
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        this.errorMessage = err.error?.message || 'Error al descartar la alerta.';
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  exportToPDF(): void {
+    window.print();
+  }
+
   logout(): void {
     this.authService.logout();
   }
