@@ -3,7 +3,12 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { AuthService, UserResponse } from '../../core/services/auth.service';
-import { DashboardService, DashboardStats, RecentTransaction, TrendPoint } from '../../core/services/dashboard.service';
+import { DashboardService, DashboardStats, RecentTransaction, TrendPoint, CardAccount, PaymentAlert } from '../../core/services/dashboard.service';
+import { ToastService } from '../../core/services/toast.service';
+import { NotificationsService } from '../../core/services/notifications.service';
+import { PdfExportService } from '../../core/services/pdf-export.service';
+import { NotificationBellComponent } from '../../shared/components/notification-bell/notification-bell.component';
+import { GUATEMALA_BANKS, GuatemalaBank, BankProduct } from '../../core/models/guatemala-banks.data';
 
 export interface TrendDataPoint {
   label: string;
@@ -34,13 +39,16 @@ export interface TrendDataSet {
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [CommonModule, RouterModule, FormsModule, NotificationBellComponent],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css'
 })
 export class DashboardComponent implements OnInit {
   private authService = inject(AuthService);
   private dashboardService = inject(DashboardService);
+  private toastService = inject(ToastService);
+  private notificationsService = inject(NotificationsService);
+  private pdfExportService = inject(PdfExportService);
   private cdr = inject(ChangeDetectorRef);
 
   currentUser: UserResponse | null = null;
@@ -61,9 +69,45 @@ export class DashboardComponent implements OnInit {
   activeFilterTx: 'Todas' | 'Gastos' | 'Ingresos' = 'Todas';
 
   // Table Search and Pagination States
+  maxDate: string = new Date().toLocaleDateString('en-CA');
   searchTerm: string = '';
   currentPage: number = 1;
   pageSize: number = 5;
+
+  // Guatemala Banks Catalog State
+  guatemalaBanks: GuatemalaBank[] = GUATEMALA_BANKS;
+  selectedBankId: string = 'bi';
+  selectedProductId: string = 'bi-clasica';
+
+  // Tarjetas & Cuentas State
+  selectedCardIndex: number = 0;
+  isCardModalOpen: boolean = false;
+  newCardName: string = '';
+  newCardType: 'DEBIT' | 'SAVINGS' | 'CASH' | 'CREDIT' = 'CREDIT';
+  newCardInitialBalance: number | null = null;
+  newCardNumber: string = '';
+  newCardColor: string = 'cyan';
+  newCardBillingCutDay: number | null = 15;
+  newCardPaymentDueDay: number | null = 5;
+  creatingCard: boolean = false;
+
+  // Pay Credit Card Modal State (Hallazgo 4)
+  isPayCreditModalOpen: boolean = false;
+  cardToPay: CardAccount | null = null;
+  paySourceCardId: number | null = null;
+  payAmount: number | null = null;
+  payDate: string = new Date().toLocaleDateString('en-CA');
+  payingCredit: boolean = false;
+
+
+  get currentSelectedBank(): GuatemalaBank {
+    return this.guatemalaBanks.find(b => b.id === this.selectedBankId) || this.guatemalaBanks[0];
+  }
+
+  get currentSelectedProduct(): BankProduct {
+    const bank = this.currentSelectedBank;
+    return bank.products.find(p => p.id === this.selectedProductId) || bank.products[0];
+  }
 
   // Active Tooltip Point on Chart Hover
   hoveredPoint: TrendDataPoint | null = null;
@@ -190,6 +234,12 @@ export class DashboardComponent implements OnInit {
     return path;
   }
 
+  isCreditMerchant(merchant?: string): boolean {
+    if (!merchant) return false;
+    const m = merchant.toLowerCase();
+    return m.includes('crédito') || m.includes('credito') || m.includes('credit') || m.includes('tc') || m.includes('platinum');
+  }
+
   get currentTrendDataSet(): TrendDataSet {
     if (!this.stats || !this.stats.tendencias) {
       return this.generateDataSet([]);
@@ -234,6 +284,7 @@ export class DashboardComponent implements OnInit {
         this.loading = false;
         if (res.success && res.data) {
           this.stats = res.data;
+          this.notificationsService.updateAlertsFromStats(this.stats);
         }
         this.cdr.detectChanges();
       },
@@ -243,6 +294,22 @@ export class DashboardComponent implements OnInit {
         this.cdr.detectChanges();
       }
     });
+  }
+
+  exportToPDF(): void {
+    if (!this.stats) {
+      this.toastService.showWarning('Sin Datos', 'No hay métricas disponibles para exportar a PDF.');
+      return;
+    }
+    try {
+      this.pdfExportService.exportDashboardAccountStatementPDF({
+        currentUser: this.currentUser,
+        stats: this.stats
+      });
+      this.toastService.showSuccess('Estado de Cuenta Descargado', 'El PDF de tu posición financiera se generó exitosamente.');
+    } catch (err: any) {
+      this.toastService.showError('Error al Generar PDF', 'Ocurrió un problema al procesar el archivo PDF.');
+    }
   }
 
   get filteredTransactions() {
@@ -256,14 +323,14 @@ export class DashboardComponent implements OnInit {
       list = list.filter(tx => tx.type === 'INCOME' || (tx as any).type === 'INGRESO' || tx.amount > 0);
     }
 
-    if (this.searchTerm.trim()) {
-      const term = this.searchTerm.toLowerCase().trim();
+    const term = (this.searchTerm || '').toLowerCase().trim();
+    if (term) {
       list = list.filter(tx =>
-        tx.title.toLowerCase().includes(term) ||
-        tx.category.toLowerCase().includes(term) ||
-        tx.merchant.toLowerCase().includes(term) ||
-        tx.date.includes(term) ||
-        tx.amount.toString().includes(term)
+        (tx.title || '').toLowerCase().includes(term) ||
+        (tx.category || '').toLowerCase().includes(term) ||
+        (tx.merchant || '').toLowerCase().includes(term) ||
+        (tx.date || '').includes(term) ||
+        (tx.amount != null ? tx.amount.toString() : '').includes(term)
       );
     }
 
@@ -282,6 +349,12 @@ export class DashboardComponent implements OnInit {
 
   onSearchChange(): void {
     this.currentPage = 1;
+  }
+
+  clearSearch(): void {
+    this.searchTerm = '';
+    this.currentPage = 1;
+    this.cdr.detectChanges();
   }
 
   nextPage(): void {
@@ -323,37 +396,68 @@ export class DashboardComponent implements OnInit {
     if (!this.transactionToEdit) return;
     if (!this.editAmount || this.editAmount <= 0) {
       this.errorMessage = 'Por favor ingresa un monto válido mayor a 0.';
+      this.toastService.showError('Monto Inválido', this.errorMessage);
       return;
     }
     if (!this.editTitle.trim()) {
       this.errorMessage = 'Por favor ingresa una descripción.';
+      this.toastService.showError('Descripción Requerida', this.errorMessage);
       return;
+    }
+    if (this.editDate > this.maxDate) {
+      this.errorMessage = 'No es posible actualizar una transacción con fecha posterior al día de hoy.';
+      this.toastService.showError('Fecha Inválida', this.errorMessage);
+      return;
+    }
+
+    const oldAmount = this.transactionToEdit.amount;
+    const newAmount = Number(this.editAmount);
+    const saldo = this.stats?.saldoDisponible || 0;
+
+    if (this.transactionToEdit.type === 'EXPENSE') {
+      const diff = newAmount - oldAmount;
+      if (diff > 0 && diff > saldo) {
+        this.errorMessage = `Fondos insuficientes: aumentar este gasto en Q ${diff.toFixed(2)} supera tu saldo disponible actual (Q ${saldo.toFixed(2)}). No se permiten saldos negativos.`;
+        this.toastService.showError('Fondos Insuficientes', this.errorMessage);
+        return;
+      }
+    } else if (this.transactionToEdit.type === 'INCOME') {
+      const decrease = oldAmount - newAmount;
+      if (decrease > 0 && decrease > saldo) {
+        this.errorMessage = `No es posible reducir este ingreso en Q ${decrease.toFixed(2)} porque tus gastos registrados superan el balance restante y tu saldo disponible (Q ${saldo.toFixed(2)}) quedaría en negativo.`;
+        this.toastService.showError('Operación no Permitida', this.errorMessage);
+        return;
+      }
     }
 
     this.editing = true;
     const id = this.transactionToEdit.id;
+    const updatedTitle = this.editTitle.trim();
 
     this.dashboardService.updateTransaction(id, {
-      title: this.editTitle.trim(),
+      title: updatedTitle,
       category: this.editCategory,
-      amount: Number(this.editAmount),
+      amount: newAmount,
       merchant: this.editMerchant,
       date: this.editDate
     }).subscribe({
       next: (res: any) => {
         this.editing = false;
+        this.transactionToEdit = null;
         if (res.success) {
           this.successMessage = 'Transacción actualizada exitosamente.';
-          this.transactionToEdit = null;
+          this.toastService.showSuccess('¡Transacción Actualizada!', `La transacción "${updatedTitle}" fue actualizada exitosamente.`);
           this.fetchStats();
         } else {
           this.errorMessage = res.message || 'Error al actualizar la transacción.';
+          this.toastService.showError('Error al Actualizar', this.errorMessage);
         }
         this.cdr.detectChanges();
       },
       error: (err: any) => {
         this.editing = false;
         this.errorMessage = err.error?.message || 'Error al actualizar la transacción.';
+        this.toastService.showError('Error al Actualizar', this.errorMessage);
         this.transactionToEdit = null;
         this.cdr.detectChanges();
       }
@@ -379,24 +483,39 @@ export class DashboardComponent implements OnInit {
   confirmDelete(): void {
     if (!this.transactionToDelete) return;
 
+    if (this.transactionToDelete.type === 'INCOME') {
+      const amt = this.transactionToDelete.amount;
+      const saldo = this.stats?.saldoDisponible || 0;
+      if (amt > saldo) {
+        this.errorMessage = `No es posible eliminar este ingreso de Q ${amt.toFixed(2)} porque tus gastos registrados dependen de estos fondos y tu saldo disponible actual (Q ${saldo.toFixed(2)}) quedaría en negativo.`;
+        this.toastService.showError('No se Puede Eliminar', this.errorMessage);
+        this.transactionToDelete = null;
+        return;
+      }
+    }
+
     this.deleting = true;
     const id = this.transactionToDelete.id;
+    const deletedTitle = this.transactionToDelete.title;
 
     this.dashboardService.deleteTransaction(id).subscribe({
       next: (res) => {
         this.deleting = false;
+        this.transactionToDelete = null;
         if (res.success) {
           this.successMessage = 'Transacción eliminada exitosamente. Tu saldo y estadísticas se han actualizado.';
-          this.transactionToDelete = null;
+          this.toastService.showSuccess('Transacción Eliminada', `La transacción "${deletedTitle}" fue eliminada correctamente.`);
           this.fetchStats();
         } else {
           this.errorMessage = res.message || 'Error al eliminar la transacción.';
+          this.toastService.showError('Error al Eliminar', this.errorMessage);
         }
         this.cdr.detectChanges();
       },
       error: (err) => {
         this.deleting = false;
         this.errorMessage = err.error?.message || 'Error al eliminar la transacción.';
+        this.toastService.showError('Error al Eliminar', this.errorMessage);
         this.transactionToDelete = null;
         this.cdr.detectChanges();
       }
@@ -433,76 +552,308 @@ export class DashboardComponent implements OnInit {
     this.cdr.detectChanges();
   }
 
-  // Savings Goal Modal State
-  isGoalModalOpen: boolean = false;
-  editTargetGoal: number = 10000;
-  editCurrentGoal: number = 0;
-  updatingGoal: boolean = false;
-
-  openEditGoalModal(): void {
-    if (this.stats?.metaAhorro) {
-      this.editTargetGoal = this.stats.metaAhorro.target;
-      this.editCurrentGoal = this.stats.metaAhorro.current;
-    }
-    this.isGoalModalOpen = true;
-    this.cdr.detectChanges();
-  }
-
-  cancelEditGoal(): void {
-    this.isGoalModalOpen = false;
-    this.cdr.detectChanges();
-  }
-
-  saveSavingsGoal(): void {
-    if (this.editTargetGoal <= 0) {
-      this.errorMessage = 'El objetivo de ahorro debe ser mayor a 0.';
-      return;
-    }
-    if (this.editCurrentGoal < 0) {
-      this.errorMessage = 'El monto actual no puede ser negativo.';
-      return;
-    }
-
-    this.updatingGoal = true;
-    this.dashboardService.updateSavingsGoal({
-      targetAmount: Number(this.editTargetGoal),
-      currentAmount: Number(this.editCurrentGoal)
-    }).subscribe({
-      next: (res) => {
-        this.updatingGoal = false;
-        this.isGoalModalOpen = false;
-        if (res.success) {
-          this.successMessage = '¡Meta de ahorro actualizada exitosamente!';
-          this.fetchStats();
-        }
-        this.cdr.detectChanges();
-      },
-      error: (err) => {
-        this.updatingGoal = false;
-        this.errorMessage = err.error?.message || 'Error al actualizar la meta de ahorro.';
-        this.cdr.detectChanges();
-      }
-    });
+  get dashboardAlerts(): PaymentAlert[] {
+    return this.notificationsService.currentAlerts;
   }
 
   dismissAlert(alertId: number): void {
+    this.notificationsService.dismissAlert(alertId);
+    if (this.stats && this.stats.alertas) {
+      this.stats.alertas = this.stats.alertas.filter(a => a.id !== alertId);
+    }
+    this.toastService.showSuccess('Alerta Resuelta', 'La alerta ha sido descartada exitosamente.');
     this.dashboardService.dismissAlert(alertId).subscribe({
+      next: () => {
+        // Alerta descartada en el backend
+      },
+      error: () => {
+        // En caso de error de red, ya fue resuelta visualmente
+      }
+    });
+    this.cdr.detectChanges();
+  }
+
+  get currentMonthName(): string {
+    const months = [
+      'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+      'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+    ];
+    const now = new Date();
+    return `${months[now.getMonth()]} ${now.getFullYear()}`;
+  }
+
+  get currentCard(): CardAccount | null {
+    if (!this.stats?.tarjetas || this.stats.tarjetas.length === 0) return null;
+    if (this.selectedCardIndex >= this.stats.tarjetas.length) {
+      this.selectedCardIndex = 0;
+    }
+    return this.stats.tarjetas[this.selectedCardIndex];
+  }
+
+  selectCard(idx: number): void {
+    this.selectedCardIndex = idx;
+    this.cdr.detectChanges();
+  }
+
+  nextCard(): void {
+    if (this.stats?.tarjetas && this.stats.tarjetas.length > 0) {
+      this.selectedCardIndex = (this.selectedCardIndex + 1) % this.stats.tarjetas.length;
+      this.cdr.detectChanges();
+    }
+  }
+
+  prevCard(): void {
+    if (this.stats?.tarjetas && this.stats.tarjetas.length > 0) {
+      this.selectedCardIndex = (this.selectedCardIndex - 1 + this.stats.tarjetas.length) % this.stats.tarjetas.length;
+      this.cdr.detectChanges();
+    }
+  }
+
+  openAddCardModal(): void {
+    this.selectedBankId = 'bi';
+    const bank = this.currentSelectedBank;
+    const defaultProd = bank.products.find(p => p.type === 'CREDIT') || bank.products[0];
+    this.selectedProductId = defaultProd.id;
+    this.applyProductToForm(defaultProd);
+    this.isCardModalOpen = true;
+    this.cdr.detectChanges();
+  }
+
+  onBankSelected(): void {
+    const bank = this.currentSelectedBank;
+    if (bank && bank.products.length > 0) {
+      const defaultProd = bank.products.find(p => p.type === 'CREDIT') || bank.products[0];
+      this.selectedProductId = defaultProd.id;
+      this.applyProductToForm(defaultProd);
+    }
+    this.cdr.detectChanges();
+  }
+
+  onProductSelected(): void {
+    const prod = this.currentSelectedProduct;
+    if (prod) {
+      this.applyProductToForm(prod);
+    }
+    this.cdr.detectChanges();
+  }
+
+  private applyProductToForm(prod: BankProduct): void {
+    this.newCardName = `${this.currentSelectedBank.shortName} ${prod.name}`;
+    this.newCardType = prod.type;
+    this.newCardInitialBalance = prod.type === 'CREDIT' ? prod.suggestedLimit : (prod.suggestedLimit || 0);
+    this.newCardColor = prod.colorGradient;
+    if (prod.type === 'CREDIT') {
+      this.newCardBillingCutDay = 15;
+      this.newCardPaymentDueDay = 5;
+    } else {
+      this.newCardBillingCutDay = null;
+      this.newCardPaymentDueDay = null;
+    }
+    if (!this.newCardNumber) {
+      this.newCardNumber = Math.floor(1000 + Math.random() * 9000).toString();
+    }
+  }
+
+  deleteCurrentCard(event?: Event): void {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    const card = this.currentCard;
+    if (!card) return;
+
+    if (confirm(`¿Estás seguro de que deseas eliminar la tarjeta o cuenta "${card.name}"?`)) {
+      this.dashboardService.deleteCard(card.id).subscribe({
+        next: (res) => {
+          if (res.success) {
+            this.toastService.showSuccess('Tarjeta Eliminada', `Se eliminó "${card.name}" correctamente.`);
+            this.selectedCardIndex = 0;
+            this.fetchStats();
+          } else {
+            this.toastService.showError('Error', res.message || 'No se pudo eliminar la tarjeta.');
+          }
+        },
+        error: (err) => {
+          this.toastService.showError('Error', err.error?.message || 'Error al eliminar la tarjeta.');
+        }
+      });
+    }
+  }
+
+  clearAllCards(): void {
+    if (!this.stats?.tarjetas || this.stats.tarjetas.length === 0) return;
+    if (confirm('¿Deseas eliminar todas las tarjetas bancarias y operar únicamente en Efectivo (Modo Realista)?')) {
+      const total = this.stats.tarjetas.length;
+      let completed = 0;
+      this.stats.tarjetas.forEach(c => {
+        this.dashboardService.deleteCard(c.id).subscribe({
+          next: () => {
+            completed++;
+            if (completed === total) {
+              this.toastService.showSuccess('Modo Efectivo Activado', 'Se han eliminado todas las tarjetas. Tu cuenta ahora opera 100% en Efectivo.');
+              this.selectedCardIndex = 0;
+              this.fetchStats();
+            }
+          },
+          error: () => {
+            completed++;
+            if (completed === total) {
+              this.fetchStats();
+            }
+          }
+        });
+      });
+    }
+  }
+
+  cancelAddCardModal(): void {
+    this.isCardModalOpen = false;
+    this.cdr.detectChanges();
+  }
+
+  saveNewCard(): void {
+    if (!this.newCardName.trim()) {
+      this.errorMessage = 'Por favor ingresa un nombre para la tarjeta o cuenta.';
+      this.toastService.showError('Nombre Requerido', this.errorMessage);
+      return;
+    }
+
+    this.creatingCard = true;
+    let mask = this.newCardNumber.trim();
+    if (mask && !mask.startsWith('••••')) {
+      const digits = mask.replace(/\D/g, '');
+      const last4 = digits.slice(-4) || '1234';
+      mask = `•••• •••• •••• ${last4}`;
+    }
+
+    const cardName = this.newCardName.trim();
+    let initialBal = this.newCardInitialBalance ? Number(this.newCardInitialBalance) : 0;
+    if (this.newCardType === 'CREDIT' && initialBal <= 0) {
+      initialBal = 8000.00;
+    }
+
+    this.dashboardService.createCard({
+      name: cardName,
+      type: this.newCardType,
+      cardNumberMask: mask || undefined,
+      initialBalance: initialBal,
+      colorGradient: this.newCardColor,
+      billingCutDay: this.newCardType === 'CREDIT' ? this.newCardBillingCutDay : undefined,
+      paymentDueDay: this.newCardType === 'CREDIT' ? this.newCardPaymentDueDay : undefined
+    }).subscribe({
       next: (res) => {
+        this.creatingCard = false;
+        this.isCardModalOpen = false;
         if (res.success) {
-          this.successMessage = 'Alerta marcada como resuelta.';
+          this.successMessage = '¡Tarjeta o cuenta añadida exitosamente!';
+          this.toastService.showSuccess('¡Tarjeta o Cuenta Creada!', `La cuenta "${cardName}" fue añadida exitosamente.`);
           this.fetchStats();
+        } else {
+          this.errorMessage = res.message || 'Error al guardar la tarjeta.';
+          this.toastService.showError('Error al Guardar', this.errorMessage);
         }
         this.cdr.detectChanges();
       },
       error: (err) => {
-        this.errorMessage = err.error?.message || 'Error al descartar la alerta.';
+        this.creatingCard = false;
+        this.errorMessage = err.error?.message || 'Error al añadir la tarjeta o cuenta.';
+        this.toastService.showError('Error al Crear Tarjeta', this.errorMessage);
         this.cdr.detectChanges();
       }
     });
   }
 
-  exportToPDF(): void {
-    window.print();
+  // Hallazgo 4: Métodos para Pago de Tarjeta de Crédito
+  get paymentSourceAccounts(): CardAccount[] {
+    return this.stats?.tarjetas.filter(c => c.type !== 'CREDIT') || [];
+  }
+
+  get currentPaySourceBalance(): number {
+    if (!this.paySourceCardId) {
+      return this.stats?.saldoEfectivo ?? 0;
+    }
+    const acc = this.paymentSourceAccounts.find(c => c.id === this.paySourceCardId);
+    return acc ? acc.balance : 0;
+  }
+
+  openPayCreditModal(card?: CardAccount, event?: Event): void {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    const target = card || this.currentCard;
+    if (!target || target.type !== 'CREDIT') {
+      this.toastService.showError('Operación no disponible', 'Solo es posible realizar pagos a tarjetas de crédito.');
+      return;
+    }
+    if ((target.currentDebt ?? 0) <= 0) {
+      this.toastService.showInfo('Sin Deuda', `La tarjeta "${target.name}" no tiene saldo deudor pendiente.`);
+      return;
+    }
+    this.cardToPay = target;
+    this.payAmount = target.currentDebt ?? 0;
+    this.paySourceCardId = null; // Default: Efectivo en Mano
+    this.payDate = new Date().toLocaleDateString('en-CA');
+    this.isPayCreditModalOpen = true;
+    this.cdr.detectChanges();
+  }
+
+  closePayCreditModal(): void {
+    this.isPayCreditModalOpen = false;
+    this.cardToPay = null;
+    this.cdr.detectChanges();
+  }
+
+  setPayFullDebt(): void {
+    if (this.cardToPay) {
+      this.payAmount = this.cardToPay.currentDebt ?? 0;
+    }
+  }
+
+  submitCreditPayment(): void {
+    if (!this.cardToPay) return;
+    if (!this.payAmount || this.payAmount <= 0) {
+      this.toastService.showError('Monto Inválido', 'Ingresa un monto mayor a 0 para abonar a tu tarjeta.');
+      return;
+    }
+    const debt = this.cardToPay.currentDebt ?? 0;
+    if (this.payAmount > debt) {
+      this.toastService.showError('Monto Excesivo', `La deuda actual es de Q ${debt.toFixed(2)}. No puedes abonar un monto superior.`);
+      return;
+    }
+    const availableSource = this.currentPaySourceBalance;
+    if (this.payAmount > availableSource) {
+      const srcName = this.paySourceCardId
+        ? (this.paymentSourceAccounts.find(c => c.id === this.paySourceCardId)?.name || 'Cuenta seleccionada')
+        : 'Efectivo en Mano';
+      this.toastService.showError('Fondos Insuficientes', `Fondos insuficientes en ${srcName}: saldo disponible Q ${availableSource.toFixed(2)}, monto a abonar Q ${this.payAmount.toFixed(2)}.`);
+      return;
+    }
+
+    this.payingCredit = true;
+    this.dashboardService.createCreditPayment({
+      creditCardId: this.cardToPay.id,
+      sourceCardId: this.paySourceCardId,
+      amount: Number(this.payAmount),
+      date: this.payDate
+    }).subscribe({
+      next: (res) => {
+        this.payingCredit = false;
+        this.isPayCreditModalOpen = false;
+        if (res.success) {
+          this.toastService.showSuccess('¡Pago Aplicado!', `Se abonaron Q ${this.payAmount!.toFixed(2)} a ${this.cardToPay!.name} exitosamente.`);
+          this.fetchStats();
+        } else {
+          this.toastService.showError('Error', res.message || 'Error al procesar el pago.');
+        }
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        this.payingCredit = false;
+        this.toastService.showError('Error', err.error?.message || 'Error al procesar el pago de la tarjeta.');
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   logout(): void {
