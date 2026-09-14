@@ -1,4 +1,4 @@
-# 💼 Control de Gastos — Enterprise Financial & Expense Management System
+# Control de Gastos 
 
 <p align="center">
   <strong>Plataforma integral empresarial de gestión financiera, control de flujos de caja, presupuestos, egresos, ingresos y analítica de tendencias en tiempo real con interfaz Glassmorphism 4K.</strong>
