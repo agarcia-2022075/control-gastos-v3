@@ -50,14 +50,14 @@
           </a>
         </div>
 
-        <a class="sidebar-nav-item" title="Presupuestos">
+        <a class="sidebar-nav-item" routerLink="/presupuestos" title="Presupuestos">
           <span class="nav-item-icon">
             <svg class="svg-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg>
           </span>
           <span>Presupuestos</span>
         </a>
 
-        <a class="sidebar-nav-item" title="Categorías">
+        <a class="sidebar-nav-item" routerLink="/categorias" routerLinkActive="active" title="Categorías">
           <span class="nav-item-icon">
             <svg class="svg-icon" viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
           </span>
@@ -73,14 +73,7 @@
         </a>
 
         <span class="nav-group-title">Sistema</span>
-        <a class="sidebar-nav-item" *ngIf="currentUser?.role === 'ADMIN'" routerLink="/admin" title="Administración">
-          <span class="nav-item-icon">
-            <svg class="svg-icon" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-          </span>
-          <span>Administración</span>
-        </a>
-        
-        <a class="sidebar-nav-item" title="Configuración">
+        <a class="sidebar-nav-item" routerLink="/configuracion" title="Configuración">
           <span class="nav-item-icon">
             <svg class="svg-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
           </span>
@@ -92,7 +85,10 @@
     <!-- User Profile Pill -->
     <div class="sidebar-user-footer" *ngIf="currentUser">
       <div class="sidebar-user-card">
-        <div class="user-avatar-mini">{{ currentUser.name.charAt(0).toUpperCase() }}</div>
+        <div class="user-avatar-mini" [class.has-img]="currentUser.avatarUrl">
+          <img *ngIf="currentUser.avatarUrl" [src]="currentUser.avatarUrl" [alt]="currentUser.name" class="user-avatar-img" (error)="currentUser.avatarUrl = undefined" referrerpolicy="no-referrer" />
+          <span *ngIf="!currentUser.avatarUrl">{{ currentUser.name.charAt(0).toUpperCase() }}</span>
+        </div>
         <div class="user-info-mini">
           <span class="user-name-mini">{{ currentUser.name }}</span>
           <span class="user-email-mini">{{ currentUser.email }}</span>
@@ -114,10 +110,7 @@
       </div>
       
       <div class="topbar-actions">
-        <div class="icon-btn" title="Notificaciones">
-          <svg style="width:20px; height:20px; stroke:#ffffff; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; fill:none;" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-          <span class="notification-dot"></span>
-        </div>
+        <app-notification-bell></app-notification-bell>
         <div style="height: 24px; width: 1px; background: rgba(255,255,255,0.15);"></div>
         <span style="font-size:0.85rem; font-weight:700; color:#34d399; display:flex; align-items:center; gap:0.4rem;">
           <span style="width:8px; height:8px; border-radius:50%; background:#34d399; box-shadow:0 0 10px #34d399;"></span>
@@ -148,7 +141,7 @@
         <div class="dashboard-top-bar">
           <div>
             <h1 class="greeting-title">Bienvenido de nuevo, {{ currentUser.name }}</h1>
-            <p class="greeting-subtitle">Resumen general de tus finanzas personales y presupuesto del mes de Agosto 2026</p>
+            <p class="greeting-subtitle">Resumen general de tus finanzas personales y presupuesto del mes de {{ currentMonthName }}</p>
           </div>
           <div class="quick-actions-group">
             <a class="btn-action-primary" routerLink="/gasto" style="text-decoration: none;">
@@ -170,15 +163,15 @@
         <div class="kpi-grid">
           <div class="kpi-card">
             <div class="kpi-header">
-              <span class="kpi-title">Saldo Total Disponible</span>
+              <span class="kpi-title">Saldo Disponible</span>
               <div class="kpi-icon-box kpi-icon-cyan">
                 <svg style="width:20px; height:20px; stroke:#38bdf8; stroke-width:2; fill:none;" viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
               </div>
             </div>
-            <div class="kpi-value">Q {{ stats.saldoDisponible | number:'1.2-2' }}</div>
+            <div class="kpi-value">Q {{ ((stats.saldoDisponible >= 0 ? stats.saldoDisponible : 0)) | number:'1.2-2' }}</div>
             <div class="kpi-footer">
-              <span class="trend-up">↑ Balance Individual</span>
-              <span style="color:#64748b;">en tiempo real</span>
+              <span class="trend-up">Libre para Gastos</span>
+              <span style="color:#64748b;">tiempo real</span>
             </div>
           </div>
 
@@ -205,25 +198,22 @@
             </div>
             <div class="kpi-value">Q {{ stats.ingresosTotales | number:'1.2-2' }}</div>
             <div class="kpi-footer">
-              <span class="trend-up">Total Abonos</span>
-              <span style="color:#64748b;">mes actual</span>
+              <span class="trend-up">Total Abonos Acumulados</span>
+              <span style="color:#64748b;">este mes: Q {{ (stats.ingresosMes !== undefined ? stats.ingresosMes : stats.ingresosTotales) | number:'1.2-2' }}</span>
             </div>
           </div>
 
-          <div class="kpi-card" style="cursor: pointer;" (click)="openEditGoalModal()" title="Haga clic para editar su meta de ahorro">
+          <div class="kpi-card">
             <div class="kpi-header">
-              <span class="kpi-title">Meta de Ahorro</span>
+              <span class="kpi-title">Efectivo en Mano</span>
               <div class="kpi-icon-box kpi-icon-purple">
-                <svg style="width:20px; height:20px; stroke:#c084fc; stroke-width:2; fill:none;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+                <svg style="width:20px; height:20px; stroke:#c084fc; stroke-width:2; fill:none;" viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
               </div>
             </div>
-            <div class="kpi-value">Q {{ stats.metaAhorro.current | number:'1.2-2' }}</div>
-            <div class="kpi-footer" style="display: flex; justify-content: space-between; align-items: center;">
-              <div>
-                <span style="color:#c084fc; font-weight:700;">{{ stats.metaAhorro.percentage }}%</span>
-                <span style="color:#64748b; margin-left: 0.35rem;">de Q {{ stats.metaAhorro.target | number:'1.0-0' }}</span>
-              </div>
-              <span style="font-size:0.75rem; color:#c084fc; text-decoration:underline;">Editar</span>
+            <div class="kpi-value">Q {{ ((stats.saldoEfectivo ?? 0) >= 0 ? stats.saldoEfectivo : 0) | number:'1.2-2' }}</div>
+            <div class="kpi-footer">
+              <span style="color:#c084fc; font-weight:700;">Físico Líquido</span>
+              <span style="color:#64748b; margin-left: 0.35rem;">en caja</span>
             </div>
           </div>
         </div>
@@ -396,8 +386,25 @@
                 
                 <div style="display: flex; align-items: center; gap: 1rem;">
                   <!-- Buscador en Vivo -->
-                  <div class="table-search-box">
-                    <input type="text" class="glass-search-input" placeholder="🔍 Buscar transacciones..." [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()">
+                  <div class="table-search-box" style="position: relative; display: flex; align-items: center;">
+                    <input 
+                      type="text" 
+                      class="glass-search-input" 
+                      placeholder="🔍 Buscar transacciones..." 
+                      [(ngModel)]="searchTerm" 
+                      (ngModelChange)="onSearchChange()"
+                      (input)="onSearchChange()"
+                      style="padding-right: 2.2rem;"
+                    >
+                    <button 
+                      *ngIf="searchTerm" 
+                      (click)="clearSearch()" 
+                      class="btn-clear-search" 
+                      title="Limpiar búsqueda y restaurar transacciones"
+                      type="button"
+                    >
+                      ✕
+                    </button>
                   </div>
 
                   <!-- Filtros de Tipo -->
@@ -427,10 +434,15 @@
                           <div class="tx-icon-badge">
                             <svg *ngIf="tx.type === 'EXPENSE'" style="width:18px; height:18px; stroke:#38bdf8; stroke-width:2; fill:none;" viewBox="0 0 24 24"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg>
                             <svg *ngIf="tx.type === 'INCOME'" style="width:18px; height:18px; stroke:#34d399; stroke-width:2; fill:none;" viewBox="0 0 24 24"><path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11M20 10v11M8 14v3M12 14v3M16 14v3"/></svg>
+                            <svg *ngIf="tx.type === 'CREDIT_PAYMENT'" style="width:18px; height:18px; stroke:#10b981; stroke-width:2; fill:none;" viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/><path d="m9 15 2 2 4-4"/></svg>
                           </div>
                           <div>
                             <span class="tx-name">{{ tx.title }}</span>
-                            <span class="tx-merchant">{{ tx.merchant }}</span>
+                            <span class="tx-merchant">
+                              {{ tx.merchant }}
+                              <span *ngIf="tx.type === 'CREDIT_PAYMENT'" style="margin-left:0.35rem; font-size:0.68rem; background:rgba(16,185,129,0.2); color:#6ee7b7; border:1px solid rgba(16,185,129,0.4); padding:1px 5px; border-radius:4px; font-weight:700;">✓ Pago TC</span>
+                              <span *ngIf="tx.type !== 'CREDIT_PAYMENT' && isCreditMerchant(tx.merchant)" style="margin-left:0.35rem; font-size:0.68rem; background:rgba(244,63,94,0.25); color:#fda4af; border:1px solid rgba(244,63,94,0.4); padding:1px 5px; border-radius:4px; font-weight:700;">💳 Crédito</span>
+                            </span>
                           </div>
                         </div>
                       </td>
@@ -441,8 +453,8 @@
                           {{ tx.status === 'COMPLETED' ? 'Completado' : 'Pendiente' }}
                         </span>
                       </td>
-                      <td [class.amount-expense]="tx.type === 'EXPENSE'" [class.amount-income]="tx.type === 'INCOME'">
-                        {{ tx.type === 'EXPENSE' ? '-' : '+' }}Q {{ tx.amount | number:'1.2-2' }}
+                      <td [class.amount-expense]="tx.type === 'EXPENSE'" [class.amount-income]="tx.type === 'INCOME'" [style.color]="tx.type === 'CREDIT_PAYMENT' ? '#34d399' : null">
+                        {{ tx.type === 'EXPENSE' ? '-' : (tx.type === 'INCOME' ? '+' : '✓ ') }}Q {{ tx.amount | number:'1.2-2' }}
                       </td>
                     </tr>
 
@@ -494,19 +506,120 @@
               </div>
             </div>
 
-            <!-- Mock Bank Card -->
+            <!-- Dynamic Bank Cards Panel -->
             <div class="side-glass-card">
-              <h3 class="side-card-title">
-                <span>Tarjetas & Cuentas</span>
-                <span style="font-size:0.8rem; color:#c084fc; cursor:pointer;">+ Añadir</span>
-              </h3>
-              <div class="bank-card-mock">
-                <div class="bank-card-chip"></div>
-                <div class="bank-card-number">•••• •••• •••• 4829</div>
-                <div class="bank-card-footer">
-                  <span>Tarjeta Débito Principal</span>
-                  <span>08/28</span>
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; flex-wrap:wrap; gap:0.5rem;">
+                <h3 class="side-card-title" style="margin-bottom:0;">
+                  <span>Tarjetas & Cuentas</span>
+                </h3>
+                <div style="display:flex; gap:0.4rem; align-items:center;">
+                  <button *ngIf="stats.tarjetas && stats.tarjetas.length > 0" (click)="clearAllCards()" title="Eliminar todas las tarjetas y operar 100% en Efectivo" style="background:rgba(244,63,94,0.12); border:1px solid rgba(244,63,94,0.25); color:#fda4af; border-radius:8px; padding:0.25rem 0.55rem; font-size:0.72rem; font-weight:600; cursor:pointer; transition:all 0.2s ease;">
+                    Modo Efectivo
+                  </button>
+                  <button (click)="openAddCardModal()" class="btn-add-card" style="background:rgba(192,132,252,0.15); border:1px solid rgba(192,132,252,0.35); color:#c084fc; border-radius:8px; padding:0.25rem 0.65rem; font-size:0.75rem; font-weight:700; cursor:pointer; transition:all 0.2s ease;">
+                    + Añadir Tarjeta
+                  </button>
                 </div>
+              </div>
+
+              <!-- Interactive Card Carousel (When cards exist) -->
+              <div *ngIf="stats.tarjetas && stats.tarjetas.length > 0">
+                <div class="bank-card-mock" [ngClass]="'card-gradient-' + (currentCard?.colorGradient || (currentCard?.type === 'CREDIT' ? 'rose' : 'cyan'))">
+                  <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                    <div class="bank-card-chip"></div>
+                    <div style="display:flex; align-items:center; gap:0.4rem;">
+                      <span class="badge-card-type" [style.background]="currentCard?.type === 'CREDIT' ? 'rgba(244,63,94,0.35)' : 'rgba(255,255,255,0.15)'" [style.color]="currentCard?.type === 'CREDIT' ? '#fda4af' : '#ffffff'">
+                        {{ currentCard?.type === 'SAVINGS' ? 'Ahorros' : (currentCard?.type === 'CASH' ? 'Efectivo' : (currentCard?.type === 'CREDIT' ? '💳 Crédito' : 'Débito')) }}
+                      </span>
+                      <button (click)="deleteCurrentCard($event)" title="Eliminar esta tarjeta" style="background:none; border:none; color:rgba(255,255,255,0.5); cursor:pointer; padding:0 3px; font-size:0.85rem; line-height:1; transition:color 0.2s;" onmouseover="this.style.color='#f43f5e'" onmouseout="this.style.color='rgba(255,255,255,0.5)'">✕</button>
+                    </div>
+                  </div>
+                  
+                  <!-- CREDIT CARD DISPLAY -->
+                  <ng-container *ngIf="currentCard?.type === 'CREDIT'">
+                    <div style="margin: 0.35rem 0 0.45rem 0;">
+                      <span style="font-size:0.7rem; color:#cbd5e1; text-transform:uppercase; letter-spacing:0.05em; display:block;">Crédito Disponible</span>
+                      <div style="font-size:1.45rem; font-weight:800; color:#ffffff; font-family:'Century Gothic', sans-serif;">
+                        Q {{ ((currentCard?.availableCredit ?? currentCard?.balance) ?? 0) | number:'1.2-2' }}
+                      </div>
+                    </div>
+
+                    <!-- Utilization bar & metrics -->
+                    <div style="background:rgba(0,0,0,0.25); border-radius:8px; padding:0.35rem 0.55rem; margin-bottom:0.45rem; border:1px solid rgba(255,255,255,0.08);">
+                      <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.75rem; margin-bottom:0.25rem;">
+                        <span style="color:#fda4af;">Deuda: <strong>Q {{ (currentCard?.currentDebt ?? 0) | number:'1.2-2' }}</strong></span>
+                        <span style="color:#cbd5e1;">Límite: Q {{ (currentCard?.creditLimit ?? 0) | number:'1.0-0' }}</span>
+                      </div>
+                      <div class="progress-bar-track" style="height:5px; background:rgba(255,255,255,0.12); border-radius:3px; overflow:hidden;">
+                        <div [style.width.%]="currentCard?.utilizationPercentage ?? 0"
+                             [style.background]="(currentCard?.utilizationPercentage ?? 0) >= 80 ? 'linear-gradient(90deg, #f43f5e, #e11d48)' : ((currentCard?.utilizationPercentage ?? 0) >= 50 ? 'linear-gradient(90deg, #fbbf24, #f59e0b)' : 'linear-gradient(90deg, #34d399, #10b981)')"
+                             style="height:100%; border-radius:3px; transition:width 0.4s ease;"></div>
+                      </div>
+                      <div style="display:flex; justify-content:flex-end; font-size:0.68rem; margin-top:0.2rem; color:#cbd5e1;">
+                        <span>{{ currentCard?.utilizationPercentage ?? 0 }}% utilizado</span>
+                      </div>
+                    </div>
+
+                    <!-- Hallazgo 5: Ciclo de Facturación (Día de Corte y Vencimiento) -->
+                    <div *ngIf="currentCard?.billingCutDay || currentCard?.paymentDueDay" style="display:flex; justify-content:space-between; align-items:center; font-size:0.72rem; color:#cbd5e1; margin-bottom:0.4rem; padding:0.25rem 0.55rem; background:rgba(0,0,0,0.2); border-radius:6px; border:1px solid rgba(255,255,255,0.06);">
+                      <span>📅 Corte: <strong>Día {{ currentCard?.billingCutDay || '--' }}</strong></span>
+                      <span>⏰ Vence: <strong>Día {{ currentCard?.paymentDueDay || '--' }}</strong></span>
+                    </div>
+
+                    <!-- Hallazgo 4: Botón Pagar Tarjeta de Crédito -->
+                    <button *ngIf="(currentCard?.currentDebt ?? 0) > 0" (click)="openPayCreditModal(currentCard, $event)" type="button" style="width:100%; margin-bottom:0.45rem; background:linear-gradient(135deg, #10b981 0%, #059669 100%); border:none; color:#ffffff; font-weight:700; font-size:0.75rem; padding:0.4rem 0.65rem; border-radius:8px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:0.4rem; box-shadow:0 3px 10px rgba(16,185,129,0.3); transition:transform 0.15s ease;">
+                      <span>💳</span>
+                      <span>Pagar Tarjeta (Abonar Deuda Q {{ (currentCard?.currentDebt ?? 0) | number:'1.2-2' }})</span>
+                    </button>
+                  </ng-container>
+
+                  <!-- DEBIT / SAVINGS / CASH DISPLAY -->
+                  <ng-container *ngIf="currentCard?.type !== 'CREDIT'">
+                    <div style="margin: 0.5rem 0 0.8rem 0;">
+                      <span style="font-size:0.75rem; color:#94a3b8; text-transform:uppercase; letter-spacing:0.05em; display:block;">Saldo en Cuenta</span>
+                      <div style="font-size:1.5rem; font-weight:800; color:#ffffff; font-family:'Century Gothic', sans-serif;">
+                        Q {{ ((currentCard?.balance ?? 0) >= 0 ? currentCard?.balance : 0) | number:'1.2-2' }}
+                      </div>
+                    </div>
+                  </ng-container>
+
+                  <div class="bank-card-number">{{ currentCard?.cardNumberMask }}</div>
+                  
+                  <div class="bank-card-footer">
+                    <span style="font-weight:600;">{{ currentCard?.name }}</span>
+                    <span>{{ currentCard?.expiryDate }}</span>
+                  </div>
+                </div>
+
+                <!-- Navigation Controls / Dots for Multiple Cards -->
+                <div *ngIf="stats.tarjetas.length > 1" style="display:flex; justify-content:space-between; align-items:center; margin-top:0.65rem;">
+                  <button (click)="prevCard()" style="background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.15); color:#cbd5e1; border-radius:6px; padding:0.25rem 0.6rem; font-size:0.8rem; cursor:pointer;">‹ Anterior</button>
+                  
+                  <div style="display:flex; gap:0.4rem; align-items:center;">
+                    <span *ngFor="let card of stats.tarjetas; let i = index" 
+                          (click)="selectCard(i)" 
+                          [style.background]="i === selectedCardIndex ? '#38bdf8' : 'rgba(255,255,255,0.2)'"
+                          [style.box-shadow]="i === selectedCardIndex ? '0 0 8px #38bdf8' : 'none'"
+                          style="width:8px; height:8px; border-radius:50%; cursor:pointer; display:inline-block; transition:all 0.2s ease;"></span>
+                  </div>
+
+                  <button (click)="nextCard()" style="background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.15); color:#cbd5e1; border-radius:6px; padding:0.25rem 0.6rem; font-size:0.8rem; cursor:pointer;">Siguiente ›</button>
+                </div>
+              </div>
+
+              <!-- Realist Empty State (When 0 cards exist) -->
+              <div *ngIf="!stats.tarjetas || stats.tarjetas.length === 0" style="background:rgba(16,185,129,0.07); border:1px dashed rgba(52,211,153,0.35); border-radius:16px; padding:1.25rem; text-align:center;">
+                <div style="width:48px; height:48px; border-radius:50%; background:rgba(52,211,153,0.15); display:flex; align-items:center; justify-content:center; margin:0 auto 0.75rem auto; border:1px solid rgba(52,211,153,0.3);">
+                  <span style="font-size:1.5rem;">💵</span>
+                </div>
+                <h4 style="color:#a7f3d0; font-size:0.95rem; font-weight:700; margin:0 0 0.35rem 0;">Operando 100% en Efectivo</h4>
+                <p style="color:#94a3b8; font-size:0.8rem; line-height:1.45; margin:0 0 1rem 0;">
+                  No tienes tarjetas bancarias vinculadas. Todos tus ingresos y compras operan directamente sobre tu saldo físico disponible.
+                </p>
+                <button (click)="openAddCardModal()" style="background:linear-gradient(135deg, #0284c7 0%, #38bdf8 100%); border:none; color:#ffffff; font-weight:700; font-size:0.82rem; padding:0.65rem 1rem; border-radius:10px; cursor:pointer; width:100%; box-shadow:0 4px 12px rgba(56,189,248,0.25); display:flex; align-items:center; justify-content:center; gap:0.45rem; transition:transform 0.15s ease;">
+                  <span>💳</span>
+                  <span>Vincular Tarjeta de Banco de Guatemala</span>
+                </button>
               </div>
             </div>
 
@@ -514,10 +627,10 @@
             <div class="side-glass-card">
               <h3 class="side-card-title">
                 <span>Alertas de Pago</span>
-                <span style="font-size:0.8rem; color:#fbbf24;">{{ stats.alertas.length }} Activas</span>
+                <span style="font-size:0.8rem; color:#fbbf24;" *ngIf="dashboardAlerts.length > 0">{{ dashboardAlerts.length }} Activas</span>
               </h3>
               
-              <div class="alert-box-item" *ngFor="let alert of stats.alertas" style="display: flex; justify-content: space-between; align-items: center;">
+              <div class="alert-box-item" *ngFor="let alert of dashboardAlerts" style="display: flex; justify-content: space-between; align-items: center;">
                 <div style="display: flex; gap: 0.75rem; align-items: flex-start;">
                   <div class="alert-box-icon">
                     <svg style="width:20px; height:20px; stroke:#fbbf24; stroke-width:2; fill:none;" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
@@ -527,13 +640,11 @@
                     <p class="alert-box-desc">{{ alert.description }}</p>
                   </div>
                 </div>
-                <button (click)="dismissAlert(alert.id)" class="btn-dismiss-alert" title="Marcar como atendida / Resolver" style="background: rgba(52, 211, 153, 0.15); border: 1px solid rgba(52, 211, 153, 0.3); color: #34d399; border-radius: 8px; padding: 0.35rem 0.65rem; font-size: 0.75rem; cursor: pointer; white-space: nowrap; margin-left: 0.5rem; transition: all 0.2s ease;">
-                  ✓ Resolver
-                </button>
+                <button class="btn-alert-dismiss" (click)="dismissAlert(alert.id)" title="Marcar como leída">✓</button>
               </div>
 
-              <div *ngIf="stats.alertas.length === 0" style="background: rgba(52, 211, 153, 0.08); border: 1px solid rgba(52, 211, 153, 0.25); border-radius: 14px; padding: 0.9rem; font-size: 0.85rem; color: #6ee7b7; display: flex; align-items: center; gap: 0.5rem;">
-                <span>✓ No tienes alertas pendientes</span>
+              <div *ngIf="dashboardAlerts.length === 0" style="text-align: center; padding: 1rem 0; color: #64748b; font-size: 0.85rem;">
+                No tienes alertas pendientes. ¡Todo en orden!
               </div>
             </div>
 
@@ -550,30 +661,213 @@
     </footer>
   </div>
 
-  <!-- Savings Goal Floating Glassmorphic Modal -->
-  <div class="modal-backdrop-blur" *ngIf="isGoalModalOpen" style="position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(7,9,24,0.75); backdrop-filter:blur(12px); display:flex; align-items:center; justify-content:center; z-index:9999;">
-    <div class="glass-modal-card" style="background:rgba(15,20,45,0.85); border:1px solid rgba(192,132,252,0.3); border-radius:24px; padding:2rem; width:90%; max-width:480px; box-shadow:0 25px 50px rgba(0,0,0,0.5);">
-      <div class="modal-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
-        <h3 class="modal-title" style="color:#c084fc; font-size:1.25rem; font-weight:700; margin:0;">Configurar Meta de Ahorro</h3>
-        <button class="btn-modal-close" (click)="cancelEditGoal()" style="background:none; border:none; color:#94a3b8; font-size:1.2rem; cursor:pointer;">✕</button>
+  <!-- Add New Card / Account Floating Glassmorphic Modal with Guatemala Banks Catalog -->
+  <div class="modal-backdrop-blur" *ngIf="isCardModalOpen" style="position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(7,9,24,0.8); backdrop-filter:blur(14px); display:flex; align-items:center; justify-content:center; z-index:9999; padding:1rem;">
+    <div class="glass-modal-card" style="background:rgba(15,20,45,0.92); border:1px solid rgba(192,132,252,0.3); border-radius:24px; padding:2rem; width:100%; max-width:580px; max-height:92vh; overflow-y:auto; box-shadow:0 25px 60px rgba(0,0,0,0.6);">
+      
+      <!-- Modal Header -->
+      <div class="modal-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.25rem; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:0.75rem;">
+        <div>
+          <h3 class="modal-title" style="color:#c084fc; font-size:1.3rem; font-weight:800; margin:0; display:flex; align-items:center; gap:0.5rem;">
+            <span>🇬🇹</span>
+            <span>Añadir Tarjeta a tu Cartera</span>
+          </h3>
+          <span style="font-size:0.8rem; color:#94a3b8;">Bancos de Guatemala — Selecciona tu entidad y registra tu tarjeta</span>
+        </div>
+        <button class="btn-modal-close" (click)="cancelAddCardModal()" style="background:none; border:none; color:#94a3b8; font-size:1.3rem; cursor:pointer;">✕</button>
       </div>
 
-      <div class="modal-body" style="display:flex; flex-direction:column; gap:1.25rem;">
+      <div class="modal-body" style="display:flex; flex-direction:column; gap:1.2rem;">
+        
+        <!-- Step 1: Select Guatemalan Bank -->
         <div class="form-group">
-          <label style="display:block; margin-bottom:0.4rem; font-size:0.88rem; color:#cbd5e1;">Monto Meta Total (Q)</label>
-          <input type="number" class="glass-search-input" style="width:100%; padding:0.75rem 1rem; border-radius:12px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.15); color:#fff; font-size:1rem;" step="100" min="1" [(ngModel)]="editTargetGoal" placeholder="Ej: 10000">
+          <label style="display:block; margin-bottom:0.4rem; font-size:0.88rem; font-weight:700; color:#e2e8f0;">
+            1. Selecciona el Banco Emisor de Guatemala:
+          </label>
+          <select class="glass-select" style="width:100%; padding:0.8rem 1rem; border-radius:12px; background:rgba(15,23,42,0.95); border:1px solid rgba(192,132,252,0.35); color:#fff; font-size:0.95rem; font-weight:600;" [(ngModel)]="selectedBankId" (ngModelChange)="onBankSelected()">
+            <option *ngFor="let bank of guatemalaBanks" [value]="bank.id">
+              {{ bank.name }} — {{ bank.slogan }}
+            </option>
+          </select>
         </div>
 
+        <!-- Step 2: Select Bank Product -->
         <div class="form-group">
-          <label style="display:block; margin-bottom:0.4rem; font-size:0.88rem; color:#cbd5e1;">Ahorro Acumulado Actual (Q)</label>
-          <input type="number" class="glass-search-input" style="width:100%; padding:0.75rem 1rem; border-radius:12px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.15); color:#fff; font-size:1rem;" step="100" min="0" [(ngModel)]="editCurrentGoal" placeholder="Ej: 5000">
+          <label style="display:block; margin-bottom:0.4rem; font-size:0.88rem; font-weight:700; color:#e2e8f0;">
+            2. Selecciona la Tarjeta o Cuenta que posees:
+          </label>
+          <select class="glass-select" style="width:100%; padding:0.8rem 1rem; border-radius:12px; background:rgba(15,23,42,0.95); border:1px solid rgba(56,189,248,0.35); color:#fff; font-size:0.95rem; font-weight:600;" [(ngModel)]="selectedProductId" (ngModelChange)="onProductSelected()">
+            <option *ngFor="let prod of currentSelectedBank.products" [value]="prod.id">
+              [{{ prod.brand }} {{ prod.category }}] {{ prod.name }} ({{ prod.type === 'CREDIT' ? 'Crédito' : (prod.type === 'SAVINGS' ? 'Ahorro' : 'Débito') }})
+            </option>
+          </select>
+        </div>
+
+        <!-- Official Bank Card Features & Benefits Box -->
+        <div style="background:rgba(2,132,199,0.08); border:1px solid rgba(56,189,248,0.25); border-radius:16px; padding:1rem; font-size:0.82rem;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.65rem; border-bottom:1px solid rgba(255,255,255,0.08); padding-bottom:0.4rem;">
+            <span style="font-weight:800; color:#38bdf8; display:flex; align-items:center; gap:0.4rem;">
+              <span>✨</span> Beneficios y Coberturas de esta Tarjeta ({{ currentSelectedBank.shortName }})
+            </span>
+            <span style="font-size:0.75rem; background:rgba(56,189,248,0.2); color:#bae6fd; padding:2px 8px; border-radius:6px; font-weight:700;">
+              {{ currentSelectedProduct.brand }} {{ currentSelectedProduct.category }}
+            </span>
+          </div>
+
+          <!-- Quick Features Grid -->
+          <div style="display:flex; flex-direction:column; gap:0.5rem; margin-bottom:0.75rem;">
+            <div style="background:rgba(0,0,0,0.25); padding:0.5rem 0.75rem; border-radius:10px; display:flex; align-items:flex-start; gap:0.5rem;">
+              <span>🎁</span>
+              <div>
+                <strong style="color:#a7f3d0; display:block; font-size:0.8rem;">Programa de Recompensas:</strong>
+                <span style="color:#cbd5e1;">{{ currentSelectedProduct.rewardsProgram }}</span>
+              </div>
+            </div>
+
+            <div style="background:rgba(0,0,0,0.25); padding:0.5rem 0.75rem; border-radius:10px; display:flex; align-items:flex-start; gap:0.5rem;">
+              <span>⚡</span>
+              <div>
+                <strong style="color:#fde047; display:block; font-size:0.8rem;">Programa de Financiamiento:</strong>
+                <span style="color:#cbd5e1;">{{ currentSelectedProduct.financingProgram }}</span>
+              </div>
+            </div>
+
+            <div style="background:rgba(0,0,0,0.25); padding:0.5rem 0.75rem; border-radius:10px; display:flex; align-items:flex-start; gap:0.5rem;">
+              <span>🛡️</span>
+              <div>
+                <strong style="color:#38bdf8; display:block; font-size:0.8rem;">Seguridad y Protección:</strong>
+                <span style="color:#cbd5e1;">{{ currentSelectedProduct.insuranceAndProtection }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Benefits List -->
+          <div>
+            <span style="color:#e2e8f0; font-weight:700; display:block; margin-bottom:0.3rem;">⭐ Lo que incluye tu tarjeta:</span>
+            <ul style="margin:0; padding-left:1.2rem; color:#cbd5e1; line-height:1.45;">
+              <li *ngFor="let ben of currentSelectedProduct.benefits">{{ ben }}</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Customization Fields for the card -->
+        <div class="form-group">
+          <label style="display:block; margin-bottom:0.4rem; font-size:0.88rem; color:#cbd5e1;">Nombre en tu Perfil Financiero</label>
+          <input type="text" class="glass-search-input" style="width:100%; padding:0.75rem 1rem; border-radius:12px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.15); color:#fff; font-size:0.95rem;" [(ngModel)]="newCardName" placeholder="Ej: Banco Industrial Bi Visa Clásica">
+        </div>
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <div class="form-group">
+            <label style="display:block; margin-bottom:0.4rem; font-size:0.88rem; color:#cbd5e1;">Últimos 4 Dígitos</label>
+            <input type="text" maxlength="4" class="glass-search-input" style="width:100%; padding:0.75rem 1rem; border-radius:12px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.15); color:#fff; font-size:0.95rem;" [(ngModel)]="newCardNumber" placeholder="Ej: 4829">
+          </div>
+
+          <div class="form-group">
+            <label style="display:block; margin-bottom:0.4rem; font-size:0.88rem; color:#cbd5e1;">
+              {{ newCardType === 'CREDIT' ? 'Límite de Crédito Autorizado (Q) *' : 'Saldo Inicial en Cuenta (Q)' }}
+            </label>
+            <input type="number" step="0.01" min="0" class="glass-search-input" style="width:100%; padding:0.75rem 1rem; border-radius:12px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.15); color:#fff; font-size:0.95rem;" [(ngModel)]="newCardInitialBalance" [placeholder]="newCardType === 'CREDIT' ? '5000.00' : '0.00'">
+          </div>
+        </div>
+
+        <!-- Hallazgo 5: Días de Corte y Pago para Tarjetas de Crédito -->
+        <div *ngIf="newCardType === 'CREDIT'" style="display:grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <div class="form-group">
+            <label style="display:block; margin-bottom:0.4rem; font-size:0.88rem; color:#cbd5e1;">Día de Corte Mensual (1-31)</label>
+            <input type="number" min="1" max="31" class="glass-search-input" style="width:100%; padding:0.75rem 1rem; border-radius:12px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.15); color:#fff; font-size:0.95rem;" [(ngModel)]="newCardBillingCutDay" placeholder="Ej: 15">
+          </div>
+          <div class="form-group">
+            <label style="display:block; margin-bottom:0.4rem; font-size:0.88rem; color:#cbd5e1;">Día Límite de Pago (1-31)</label>
+            <input type="number" min="1" max="31" class="glass-search-input" style="width:100%; padding:0.75rem 1rem; border-radius:12px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.15); color:#fff; font-size:0.95rem;" [(ngModel)]="newCardPaymentDueDay" placeholder="Ej: 5">
+          </div>
+        </div>
+
+        <div *ngIf="newCardType === 'CREDIT'" style="padding:0.6rem 0.85rem; border-radius:10px; background:rgba(244,63,94,0.12); border:1px solid rgba(244,63,94,0.3); font-size:0.82rem; color:#fda4af;">
+          ℹ️ <strong>Línea de Crédito:</strong> Tendrás disponible hasta <strong>Q {{ (newCardInitialBalance || currentSelectedProduct.suggestedLimit) | number:'1.2-2' }}</strong>. Las compras con esta tarjeta no requerirán saldo en efectivo disponible.
         </div>
       </div>
 
-      <div class="modal-footer" style="display:flex; justify-content:flex-end; gap:0.75rem; margin-top:1.75rem;">
-        <button (click)="cancelEditGoal()" style="background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.15); color:#cbd5e1; border-radius:12px; padding:0.65rem 1.25rem; font-weight:600; cursor:pointer;">Cancelar</button>
-        <button (click)="saveSavingsGoal()" [disabled]="updatingGoal" style="background:linear-gradient(135deg, #9333ea 0%, #c084fc 100%); border:none; color:#fff; border-radius:12px; padding:0.65rem 1.5rem; font-weight:700; cursor:pointer; box-shadow:0 4px 15px rgba(192,132,252,0.4);">
-          {{ updatingGoal ? 'Guardando...' : 'Guardar Meta' }}
+      <div class="modal-footer" style="display:flex; justify-content:flex-end; gap:0.75rem; margin-top:1.5rem; border-top:1px solid rgba(255,255,255,0.1); padding-top:1rem;">
+        <button (click)="cancelAddCardModal()" style="background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.15); color:#cbd5e1; border-radius:12px; padding:0.65rem 1.25rem; font-weight:600; cursor:pointer;">Cancelar</button>
+        <button (click)="saveNewCard()" [disabled]="creatingCard" style="background:linear-gradient(135deg, #0284c7 0%, #38bdf8 100%); border:none; color:#fff; border-radius:12px; padding:0.65rem 1.5rem; font-weight:700; cursor:pointer; box-shadow:0 4px 15px rgba(56,189,248,0.35);">
+          {{ creatingCard ? 'Guardando...' : '✓ Guardar y Vincular Tarjeta' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hallazgo 4: Modal para Pago de Tarjeta de Crédito (No se registra como ingreso) -->
+  <div class="modal-backdrop-blur" *ngIf="isPayCreditModalOpen" style="position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(7,9,24,0.8); backdrop-filter:blur(14px); display:flex; align-items:center; justify-content:center; z-index:9999; padding:1rem;">
+    <div class="glass-modal-card" style="background:rgba(15,20,45,0.95); border:1px solid rgba(16,185,129,0.35); border-radius:24px; padding:2rem; width:100%; max-width:500px; box-shadow:0 25px 60px rgba(0,0,0,0.6);">
+      
+      <div class="modal-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.25rem; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:0.75rem;">
+        <div>
+          <h3 class="modal-title" style="color:#34d399; font-size:1.25rem; font-weight:800; margin:0; display:flex; align-items:center; gap:0.5rem;">
+            <span>💳</span>
+            <span>Pagar Tarjeta de Crédito</span>
+          </h3>
+          <span style="font-size:0.8rem; color:#94a3b8;">Liquidación de saldo deudor sin inflar ingresos</span>
+        </div>
+        <button class="btn-modal-close" (click)="closePayCreditModal()" style="background:none; border:none; color:#94a3b8; font-size:1.3rem; cursor:pointer;">✕</button>
+      </div>
+
+      <div class="modal-body" style="display:flex; flex-direction:column; gap:1rem;">
+        <!-- Target Credit Card Info Box -->
+        <div style="background:rgba(244,63,94,0.1); border:1px solid rgba(244,63,94,0.3); border-radius:14px; padding:0.85rem 1rem; display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <span style="font-size:0.75rem; color:#fda4af; text-transform:uppercase; letter-spacing:0.05em; display:block;">Tarjeta a Pagar</span>
+            <strong style="color:#ffffff; font-size:0.95rem;">{{ cardToPay?.name }}</strong>
+            <span style="font-size:0.78rem; color:#cbd5e1; display:block;">{{ cardToPay?.cardNumberMask }}</span>
+          </div>
+          <div style="text-align:right;">
+            <span style="font-size:0.75rem; color:#fda4af; display:block;">Deuda Actual:</span>
+            <strong style="color:#fda4af; font-size:1.2rem;">Q {{ (cardToPay?.currentDebt ?? 0) | number:'1.2-2' }}</strong>
+          </div>
+        </div>
+
+        <!-- Source Account -->
+        <div class="form-group">
+          <label style="display:block; margin-bottom:0.4rem; font-size:0.85rem; font-weight:700; color:#e2e8f0;">
+            Cuenta de Origen para el Pago:
+          </label>
+          <select class="glass-select" style="width:100%; padding:0.75rem 1rem; border-radius:12px; background:rgba(15,23,42,0.95); border:1px solid rgba(52,211,153,0.35); color:#fff; font-size:0.9rem;" [(ngModel)]="paySourceCardId">
+            <option [ngValue]="null">
+              💵 Efectivo en Mano / Caja — Saldo: Q {{ ((stats?.saldoEfectivo ?? 0) >= 0 ? stats?.saldoEfectivo : 0) | number:'1.2-2' }}
+            </option>
+            <option *ngFor="let acc of paymentSourceAccounts" [ngValue]="acc.id">
+              🏧 {{ acc.name }} ({{ acc.cardNumberMask }}) — Saldo: Q {{ acc.balance | number:'1.2-2' }}
+            </option>
+          </select>
+        </div>
+
+        <!-- Amount to Pay -->
+        <div class="form-group">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.4rem;">
+            <label style="font-size:0.85rem; font-weight:700; color:#e2e8f0; margin:0;">
+              Monto a Pagar (Q):
+            </label>
+            <button (click)="setPayFullDebt()" type="button" style="background:rgba(52,211,153,0.15); border:1px solid rgba(52,211,153,0.3); color:#a7f3d0; border-radius:6px; padding:0.15rem 0.5rem; font-size:0.75rem; cursor:pointer; font-weight:600;">
+              Pagar Total (Q {{ (cardToPay?.currentDebt ?? 0) | number:'1.2-2' }})
+            </button>
+          </div>
+          <input type="number" step="0.01" min="0.01" [max]="cardToPay?.currentDebt ?? 0" class="glass-search-input" style="width:100%; padding:0.75rem 1rem; border-radius:12px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.15); color:#fff; font-size:1.1rem; font-weight:700;" [(ngModel)]="payAmount">
+        </div>
+
+        <!-- Date -->
+        <div class="form-group">
+          <label style="display:block; margin-bottom:0.4rem; font-size:0.85rem; color:#cbd5e1;">Fecha de Pago</label>
+          <input type="date" [max]="maxDate" class="glass-search-input" style="width:100%; padding:0.65rem 1rem; border-radius:12px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.15); color:#fff; font-size:0.9rem;" [(ngModel)]="payDate">
+        </div>
+
+        <div style="font-size:0.78rem; color:#94a3b8; background:rgba(255,255,255,0.04); border-radius:10px; padding:0.6rem 0.8rem; border:1px solid rgba(255,255,255,0.06);">
+          ℹ️ <strong>Realismo Financiero:</strong> Este pago reducirá tu deuda de crédito y restará fondos de la cuenta seleccionada. <strong>No se registrará como un ingreso mensual</strong> en tus gráficos y reportes.
+        </div>
+      </div>
+
+      <div class="modal-footer" style="display:flex; justify-content:flex-end; gap:0.75rem; margin-top:1.5rem; border-top:1px solid rgba(255,255,255,0.1); padding-top:1rem;">
+        <button (click)="closePayCreditModal()" style="background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.15); color:#cbd5e1; border-radius:12px; padding:0.65rem 1.25rem; font-weight:600; cursor:pointer;">Cancelar</button>
+        <button (click)="submitCreditPayment()" [disabled]="payingCredit" style="background:linear-gradient(135deg, #10b981 0%, #059669 100%); border:none; color:#fff; border-radius:12px; padding:0.65rem 1.5rem; font-weight:700; cursor:pointer; box-shadow:0 4px 15px rgba(16,185,129,0.35);">
+          {{ payingCredit ? 'Procesando...' : '✓ Confirmar Pago' }}
         </button>
       </div>
     </div>

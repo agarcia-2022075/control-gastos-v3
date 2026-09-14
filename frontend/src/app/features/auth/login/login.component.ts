@@ -109,7 +109,8 @@ export class LoginComponent {
               // Verificar en BD: si no existe lo crea, si existe lo deja pasar
               this.authService.googleLogin({
                 email: profile.email,
-                name: profile.name || profile.email.split('@')[0]
+                name: profile.name || profile.email.split('@')[0],
+                picture: profile.picture
               }).subscribe({
                 next: (res) => {
                   this.googleLoading = false;
