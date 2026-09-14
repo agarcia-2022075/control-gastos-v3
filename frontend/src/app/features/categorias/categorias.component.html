@@ -1,0 +1,409 @@
+<div class="app-container" [class.collapsed]="isCollapsed" id="appContainer">
+  <!-- Background Abstract Glowing Orbs -->
+  <div class="bg-orbs-container" aria-hidden="true">
+    <div class="bg-orb orb-cyan"></div>
+    <div class="bg-orb orb-purple"></div>
+    <div class="bg-orb orb-blue"></div>
+    <div class="bg-orb orb-magenta"></div>
+  </div>
+
+  <!-- Left Glassmorphism Sidebar Navigation -->
+  <aside class="app-sidebar" id="appSidebar">
+    <div>
+      <div class="sidebar-brand-box">
+        <div class="brand-icon-wrapper">
+          <img src="logo.jpg" alt="Logo control-gastos" class="brand-logo-img">
+        </div>
+        <span class="brand-name">control<span class="brand-accent">-gastos</span></span>
+      </div>
+
+      <nav class="sidebar-nav">
+        <span class="nav-group-title">Menú Principal</span>
+        
+        <a class="sidebar-nav-item" routerLink="/dashboard" title="Dashboard">
+          <span class="nav-item-icon">
+            <svg class="svg-icon" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="2"/><rect x="14" y="3" width="7" height="5" rx="2"/><rect x="14" y="12" width="7" height="9" rx="2"/><rect x="3" y="16" width="7" height="5" rx="2"/></svg>
+          </span>
+          <span>Dashboard</span>
+        </a>
+
+        <!-- Transacciones Dropdown Header -->
+        <div class="sidebar-nav-item nav-dropdown-toggle" [class.open]="isTxOpen" (click)="toggleTxSubmenu($event)" title="Transacciones">
+          <div style="display:flex; align-items:center; gap:0.85rem;">
+            <span class="nav-item-icon">
+              <svg class="svg-icon" viewBox="0 0 24 24"><path d="M7 10l5-5 5 5M7 14l5 5 5-5"/></svg>
+            </span>
+            <span>Transacciones</span>
+          </div>
+          <svg class="chevron-icon" viewBox="0 0 24 24" fill="none" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+
+        <!-- Sub-menu Items -->
+        <div class="sub-menu-container" [class.show]="isTxOpen" id="txSubmenu">
+          <a class="sub-menu-item" routerLink="/gasto" title="Registrar Gasto">
+            <svg style="width:14px; height:14px; stroke:#f43f5e; fill:none; stroke-width:2;" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <span>Registrar Gasto</span>
+          </a>
+          <a class="sub-menu-item" routerLink="/ingreso" title="Registrar Ingreso">
+            <svg style="width:14px; height:14px; stroke:#34d399; fill:none; stroke-width:2;" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+            <span>Registrar Ingreso</span>
+          </a>
+        </div>
+
+        <a class="sidebar-nav-item" routerLink="/presupuestos" title="Presupuestos">
+          <span class="nav-item-icon">
+            <svg class="svg-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg>
+          </span>
+          <span>Presupuestos</span>
+        </a>
+
+        <a class="sidebar-nav-item active" routerLink="/categorias" routerLinkActive="active" title="Categorías">
+          <span class="nav-item-icon">
+            <svg class="svg-icon" viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+          </span>
+          <span>Categorías</span>
+        </a>
+
+        <span class="nav-group-title">Analítica</span>
+        <a class="sidebar-nav-item" routerLink="/reportes" title="Informes & Reportes">
+          <span class="nav-item-icon">
+            <svg class="svg-icon" viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+          </span>
+          <span>Informes & Reportes</span>
+        </a>
+
+        <span class="nav-group-title">Sistema</span>
+        <a class="sidebar-nav-item" routerLink="/configuracion" title="Configuración">
+          <span class="nav-item-icon">
+            <svg class="svg-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          </span>
+          <span>Configuración</span>
+        </a>
+      </nav>
+    </div>
+
+    <!-- User Profile Pill -->
+    <div class="sidebar-user-footer" *ngIf="currentUser">
+      <div class="sidebar-user-card">
+        <div class="user-avatar-mini" [class.has-img]="currentUser.avatarUrl">
+          <img *ngIf="currentUser.avatarUrl" [src]="currentUser.avatarUrl" [alt]="currentUser.name" class="user-avatar-img" (error)="currentUser.avatarUrl = undefined" referrerpolicy="no-referrer" />
+          <span *ngIf="!currentUser.avatarUrl">{{ currentUser.name.charAt(0).toUpperCase() }}</span>
+        </div>
+        <div class="user-info-mini">
+          <span class="user-name-mini">{{ currentUser.name }}</span>
+          <span class="user-email-mini">{{ currentUser.email }}</span>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content Wrapper -->
+  <div class="main-wrapper">
+    <!-- Topbar Header -->
+    <header class="topbar-header">
+      <div class="topbar-left">
+        <button class="sidebar-toggle-btn" (click)="toggleSidebar()" title="Desplegar / Contraer Menú">
+          <svg style="width:20px; height:20px; stroke:#ffffff; stroke-width:2.2; stroke-linecap:round; fill:none;" viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <span class="page-location-title">Control de Gastos — Catálogo de Categorías</span>
+      </div>
+      
+      <div class="topbar-actions">
+        <app-notification-bell></app-notification-bell>
+        <div style="height: 24px; width: 1px; background: rgba(255,255,255,0.15);"></div>
+        <span style="font-size:0.85rem; font-weight:700; color:#34d399; display:flex; align-items:center; gap:0.4rem;">
+          <span style="width:8px; height:8px; border-radius:50%; background:#34d399; box-shadow:0 0 10px #34d399;"></span>
+          Sesión Activa
+        </span>
+        <button class="topbar-logout-shortcut" (click)="logout()" title="Cerrar Sesión" style="background: rgba(239, 68, 68, 0.18); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.35); padding: 0.55rem 1.1rem; border-radius: 10px; font-weight: 700; font-size: 0.88rem; cursor: pointer; display: flex; align-items: center; gap: 0.45rem; backdrop-filter: blur(8px); transition: all 0.25s ease;">
+          <svg style="width:18px; height:18px; stroke:#fca5a5; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; fill:none;" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          <span style="color: #fca5a5; font-weight: 700;">Cerrar Sesión</span>
+        </button>
+      </div>
+    </header>
+
+    <main class="page-content">
+      <!-- HERO HEADER -->
+      <section class="categorias-hero">
+        <div class="hero-text-block">
+          <div class="hero-badge">
+            <span class="pulse-dot"></span>
+            <span>Centro de Personalización Financiera</span>
+          </div>
+          <h1 class="hero-title">Gestor Inteligente de Categorías</h1>
+          <p class="hero-subtitle">
+            Crea, edita y organiza tus categorías de ingresos y gastos. Personaliza iconos, colores distintivos y gestiona tus movimientos con total seguridad.
+          </p>
+        </div>
+
+        <div class="hero-actions-block">
+          <button type="button" class="btn-add-category" (click)="openCreateModal()">
+            <svg style="width:18px; height:18px; stroke:currentColor; stroke-width:2.5; fill:none;" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <span>Nueva Categoría</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- CONTROLS & FILTER BAR -->
+      <section class="controls-bar-card">
+        <!-- Tabs: Gastos vs Ingresos -->
+        <div class="tabs-group">
+          <button type="button" class="tab-pill" [class.active]="activeTab === 'EXPENSE'" (click)="setTab('EXPENSE')">
+            <span class="tab-dot dot-red"></span>
+            <span>Gastos</span>
+            <span class="tab-badge">{{ totalExpensesCount }}</span>
+          </button>
+          <button type="button" class="tab-pill" [class.active]="activeTab === 'INCOME'" (click)="setTab('INCOME')">
+            <span class="tab-dot dot-green"></span>
+            <span>Ingresos</span>
+            <span class="tab-badge">{{ totalIncomesCount }}</span>
+          </button>
+        </div>
+
+        <!-- Instant Search Box -->
+        <div class="search-box-wrapper">
+          <svg class="search-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input 
+            type="text" 
+            class="search-input" 
+            placeholder="Buscar categoría por nombre..." 
+            [(ngModel)]="searchTerm" 
+            (ngModelChange)="onSearchChange()" 
+            (input)="onSearchChange()"
+          />
+          <button *ngIf="searchTerm" type="button" class="btn-clear-search" (click)="clearSearch()" title="Limpiar filtro">✕</button>
+        </div>
+      </section>
+
+      <!-- CATEGORIES GRID -->
+      <section class="categories-grid" *ngIf="!loading && filteredCategories.length > 0">
+        <div 
+          class="category-card" 
+          *ngFor="let cat of filteredCategories" 
+          [style.--cat-glow]="cat.color"
+        >
+          <div class="cat-card-header">
+            <div class="cat-icon-avatar" [style.background]="cat.color + '22'" [style.border-color]="cat.color + '55'">
+              <span class="cat-symbol">{{ getIconSymbol(cat.icon) }}</span>
+            </div>
+            
+            <div class="cat-header-actions">
+              <span *ngIf="cat.isSystem" class="badge-system" title="Categoría base del sistema">Sistema</span>
+              <span *ngIf="!cat.isSystem" class="badge-custom" title="Categoría personalizada">Personalizada</span>
+
+              <button type="button" class="btn-icon-action" (click)="openEditModal(cat)" title="Editar categoría">
+                <svg style="width:15px; height:15px; stroke:currentColor; stroke-width:2; fill:none;" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+              </button>
+
+              <button type="button" class="btn-icon-action btn-danger" (click)="openDeleteModal(cat)" title="Eliminar categoría">
+                <svg style="width:15px; height:15px; stroke:currentColor; stroke-width:2; fill:none;" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="cat-card-body">
+            <div class="cat-name-row">
+              <span class="cat-color-dot" [style.background]="cat.color"></span>
+              <h3 class="cat-name">{{ cat.name }}</h3>
+            </div>
+            
+            <div class="cat-metrics-grid">
+              <div class="metric-box">
+                <span class="metric-label">Movimientos</span>
+                <span class="metric-value">{{ cat.transactionCount }} transacciones</span>
+              </div>
+              <div class="metric-box">
+                <span class="metric-label">Este Mes</span>
+                <span class="metric-value font-mono">Q {{ cat.monthlyAmount | number:'1.2-2' }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="cat-card-footer">
+            <a routerLink="/presupuestos" class="btn-budget-link" title="Gestionar presupuestos">
+              <span>Ver en Presupuestos</span>
+              <svg style="width:12px; height:12px; stroke:currentColor; stroke-width:2; fill:none;" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- EMPTY STATE -->
+      <div class="empty-state-card" *ngIf="!loading && filteredCategories.length === 0">
+        <div class="empty-icon-circle">🏷️</div>
+        <h3>No se encontraron categorías</h3>
+        <p *ngIf="searchTerm">No hay categorías que coincidan con la búsqueda "<strong>{{ searchTerm }}</strong>".</p>
+        <p *ngIf="!searchTerm">Aún no tienes categorías en esta sección. Crea una nueva categoría con el botón superior.</p>
+        <button type="button" class="btn-add-category" (click)="openCreateModal()">
+          <span>+ Crear Categoría</span>
+        </button>
+      </div>
+
+      <!-- LOADING STATE -->
+      <div class="loading-state-card" *ngIf="loading">
+        <div class="spinner"></div>
+        <p>Cargando catálogo de categorías...</p>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- MODAL: CREAR / EDITAR CATEGORÍA -->
+<div class="modal-backdrop" *ngIf="isModalOpen">
+  <div class="modal-card">
+    <div class="modal-header">
+      <div class="modal-title-group">
+        <h2>{{ isEditing ? 'Editar Categoría' : 'Nueva Categoría' }}</h2>
+        <p>{{ isEditing ? 'Modifica los atributos visuales o nombre de la categoría' : 'Crea una nueva etiqueta para tus registros' }}</p>
+      </div>
+      <button type="button" class="btn-modal-close" (click)="closeModal()">✕</button>
+    </div>
+
+    <form (ngSubmit)="saveCategory()" class="modal-form">
+      <!-- Name -->
+      <div class="form-group">
+        <label class="form-label">Nombre de la Categoría *</label>
+        <input 
+          type="text" 
+          class="glass-input" 
+          placeholder="Ej. Gimnasio & Fitness, Streaming, Mascotas..." 
+          [(ngModel)]="catName" 
+          name="catName" 
+          required 
+          maxlength="80"
+        />
+      </div>
+
+      <!-- Type (only on create) -->
+      <div class="form-group" *ngIf="!isEditing">
+        <label class="form-label">Tipo de Flujo *</label>
+        <div class="type-toggle-group">
+          <button 
+            type="button" 
+            class="toggle-btn" 
+            [class.active-expense]="catType === 'EXPENSE'"
+            (click)="catType = 'EXPENSE'"
+          >
+            🔴 Egresos / Gastos
+          </button>
+          <button 
+            type="button" 
+            class="toggle-btn" 
+            [class.active-income]="catType === 'INCOME'"
+            (click)="catType = 'INCOME'"
+          >
+            🟢 Ingresos / Entradas
+          </button>
+        </div>
+      </div>
+
+      <!-- Icon Selector Grid -->
+      <div class="form-group">
+        <label class="form-label">Icono Representativo</label>
+        <div class="icon-selector-grid">
+          <button 
+            type="button" 
+            *ngFor="let icon of iconCatalog" 
+            class="icon-choice-btn" 
+            [class.selected]="catIcon === icon.id"
+            (click)="selectIcon(icon.id)"
+            [title]="icon.name"
+          >
+            <span class="icon-choice-symbol">{{ icon.symbol }}</span>
+            <span class="icon-choice-label">{{ icon.name.split(' ')[0] }}</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Color Palette Picker -->
+      <div class="form-group">
+        <label class="form-label">Color de Identidad</label>
+        <div class="color-palette-row">
+          <button 
+            type="button" 
+            *ngFor="let color of colorPalette" 
+            class="color-choice-btn" 
+            [style.background]="color" 
+            [class.selected]="catColor === color"
+            (click)="selectColor(color)"
+          >
+            <span *ngIf="catColor === color" class="check-mark">✓</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Live Preview Badge -->
+      <div class="preview-badge-box">
+        <span class="preview-label">Vista Previa:</span>
+        <div class="preview-pill" [style.border-color]="catColor" [style.background]="catColor + '20'">
+          <span class="preview-symbol">{{ getIconSymbol(catIcon) }}</span>
+          <span class="preview-name" [style.color]="catColor">{{ catName || 'Nombre de Categoría' }}</span>
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="modal-footer">
+        <button type="button" class="btn-modal-cancel" (click)="closeModal()" [disabled]="submittingCategory">Cancelar</button>
+        <button type="submit" class="btn-modal-save" [disabled]="submittingCategory || !catName.trim()">
+          <span *ngIf="!submittingCategory">{{ isEditing ? 'Guardar Cambios' : 'Crear Categoría' }}</span>
+          <span *ngIf="submittingCategory">Guardando...</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- MODAL: ELIMINACIÓN SEGURA Y REASIGNACIÓN -->
+<div class="modal-backdrop" *ngIf="isDeleteModalOpen && categoryToDelete">
+  <div class="modal-card modal-delete-card">
+    <div class="modal-header">
+      <div class="modal-title-group">
+        <h2 style="color:#f43f5e;">Eliminar Categoría</h2>
+        <p>Protección contra registros huérfanos e integridad financiera</p>
+      </div>
+      <button type="button" class="btn-modal-close" (click)="closeDeleteModal()">✕</button>
+    </div>
+
+    <div class="modal-body">
+      <div class="delete-warning-banner">
+        <div class="warning-icon">⚠️</div>
+        <div class="warning-text">
+          Estás por eliminar la categoría <strong>"{{ categoryToDelete.name }}"</strong>.
+        </div>
+      </div>
+
+      <!-- If has transactions, force reassignment -->
+      <div *ngIf="categoryToDelete.transactionCount > 0" class="reassign-section">
+        <p class="reassign-instructions">
+          Esta categoría tiene <strong>{{ categoryToDelete.transactionCount }}</strong> transacciones asociadas. Para no perder tu historial, selecciona a qué categoría deseas reasignarlas:
+        </p>
+
+        <div class="form-group">
+          <label class="form-label">Categoría de Destino para el Historial *</label>
+          <select class="glass-select" [(ngModel)]="reassignTargetName" name="reassignTargetName" required>
+            <option *ngFor="let opt of getReassignOptions(categoryToDelete)" [value]="opt.name">
+              {{ getIconSymbol(opt.icon) }} {{ opt.name }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div *ngIf="categoryToDelete.transactionCount === 0" class="no-tx-notice">
+        Esta categoría no tiene movimientos históricos asociados. Puede ser eliminada de inmediato de forma segura.
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn-modal-cancel" (click)="closeDeleteModal()" [disabled]="submittingDelete">Cancelar</button>
+      <button 
+        type="button" 
+        class="btn-modal-delete" 
+        (click)="confirmDelete()" 
+        [disabled]="submittingDelete || (categoryToDelete.transactionCount > 0 && !reassignTargetName)"
+      >
+        <span *ngIf="!submittingDelete">Eliminar y Reasignar</span>
+        <span *ngIf="submittingDelete">Procesando...</span>
+      </button>
+    </div>
+  </div>
+</div>

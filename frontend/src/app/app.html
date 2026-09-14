@@ -1,0 +1,84 @@
+<div class="app-layout">
+  <!-- Floating Toast Notifications Container -->
+  <div class="toast-floating-container" aria-live="polite">
+    <div 
+      *ngFor="let toast of toastService.toasts()" 
+      class="toast-card toast-{{ toast.type }}"
+      role="alert"
+    >
+      <div class="toast-icon-wrapper">
+        <span *ngIf="toast.type === 'success'" class="toast-icon icon-success">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        </span>
+        <span *ngIf="toast.type === 'error'" class="toast-icon icon-error">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        </span>
+        <span *ngIf="toast.type === 'warning'" class="toast-icon icon-warning">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        </span>
+        <span *ngIf="toast.type === 'info'" class="toast-icon icon-info">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+        </span>
+      </div>
+      <div class="toast-content">
+        <h4 class="toast-title">{{ toast.title }}</h4>
+        <p *ngIf="toast.message" class="toast-message">{{ toast.message }}</p>
+      </div>
+      <button (click)="toastService.remove(toast.id)" class="toast-btn-close" aria-label="Cerrar notificación">
+        ✕
+      </button>
+      <div class="toast-progress" [style.animation-duration.ms]="toast.duration"></div>
+    </div>
+  </div>
+
+  <!-- Background Abstract Glowing Orbs for Glassmorphism -->
+  <div class="bg-orbs-container" aria-hidden="true" *ngIf="!isFullLayoutRoute()">
+    <div class="bg-orb orb-cyan"></div>
+    <div class="bg-orb orb-purple"></div>
+    <div class="bg-orb orb-blue"></div>
+    <div class="bg-orb orb-magenta"></div>
+  </div>
+
+  <!-- Session Expired Glassmorphic Modal Overlay -->
+  <div *ngIf="sessionService.isSessionExpired()" class="session-modal-backdrop">
+    <div class="session-modal-card glass-modal">
+      <div class="session-modal-icon">
+        <span class="icon-pulse">⌛</span>
+      </div>
+      <h2>Su sesión ha finalizado</h2>
+      <p>Por su seguridad, el tiempo de acceso de esta sesión ha caducado. Por favor, haga clic abajo para ingresar de nuevo a su cuenta.</p>
+      <button (click)="sessionService.redirectToLogin()" class="btn-session-reconnect">
+        Reconectar e Iniciar Sesión
+      </button>
+    </div>
+  </div>
+
+  <header class="app-header" *ngIf="!isFullLayoutRoute()">
+    <div class="header-container">
+      <a routerLink="/dashboard" class="brand">
+        <div class="brand-icon-wrapper">
+          <img src="logo.jpg" alt="Logo control-gastos" class="brand-logo-img">
+        </div>
+        <span class="brand-name">control<span class="brand-accent">-gastos</span></span>
+      </a>
+      <nav class="nav-links">
+        <ng-container *ngIf="!authService.isLoggedIn()">
+          <a routerLink="/login" routerLinkActive="active">Iniciar Sesión</a>
+          <a routerLink="/register" routerLinkActive="active" class="btn-nav-accent">Registro</a>
+        </ng-container>
+        <ng-container *ngIf="authService.isLoggedIn()">
+          <a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
+          <button (click)="authService.logout()" class="nav-btn-logout">Cerrar Sesión</button>
+        </ng-container>
+      </nav>
+    </div>
+  </header>
+
+  <main class="main-content" [class.full-layout]="isFullLayoutRoute()">
+    <router-outlet></router-outlet>
+  </main>
+
+  <footer class="app-footer" *ngIf="!isFullLayoutRoute()">
+    <p>&copy; 2026 control-gastos</p>
+  </footer>
+</div>

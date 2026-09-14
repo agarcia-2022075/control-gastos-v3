@@ -1,0 +1,82 @@
+<div class="admin-container">
+  <div class="card glass-card">
+    <div class="header">
+      <div>
+        <span class="admin-badge-subtitle">GESTIÓN GENERAL SISTEMA</span>
+        <h1>Panel de Administración</h1>
+        <p *ngIf="currentUser">Bienvenido, <strong>{{ currentUser.name }}</strong> (Rol actual: <span class="badge admin">ADMIN</span>)</p>
+      </div>
+      <a routerLink="/dashboard" class="btn btn-secondary">Ir a Dashboard</a>
+    </div>
+
+    <div *ngIf="loading" class="loading-state">
+      <div class="glass-spinner"></div>
+      <p>Cargando información administrativa...</p>
+    </div>
+
+    <div *ngIf="errorMessage" class="alert alert-error">
+      {{ errorMessage }}
+    </div>
+
+    <div *ngIf="successMessage" class="alert alert-success">
+      {{ successMessage }}
+    </div>
+
+    <div *ngIf="!loading && !errorMessage" class="content">
+      <div class="stats-bar">
+        <div class="stat-card">
+          <div class="stat-icon-wrapper">
+            <span>👥</span>
+          </div>
+          <div>
+            <span class="stat-label">Usuarios Registrados</span>
+            <span class="stat-value">{{ users.length }}</span>
+          </div>
+        </div>
+      </div>
+
+      <h2>Gestión de Usuarios</h2>
+      <div class="table-responsive" *ngIf="users.length > 0; else emptyUsers">
+        <table class="users-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nombre</th>
+              <th>Email</th>
+              <th>Rol Actual</th>
+              <th>Acción (Cambiar Rol)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let u of users">
+              <td class="user-id">#{{ u.id }}</td>
+              <td class="user-name">{{ u.name }}</td>
+              <td class="user-email">{{ u.email }}</td>
+              <td>
+                <span class="badge" [class.admin]="u.role === 'ADMIN'" [class.user]="u.role === 'USER'">
+                  {{ u.role }}
+                </span>
+              </td>
+              <td>
+                <select 
+                  [ngModel]="u.role" 
+                  (ngModelChange)="onRoleChange(u, $event)"
+                  class="role-select"
+                >
+                  <option value="USER">USER</option>
+                  <option value="ADMIN">ADMIN</option>
+                </select>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <ng-template #emptyUsers>
+        <div class="loading-state">
+          <p>No se encontraron usuarios registrados.</p>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+</div>

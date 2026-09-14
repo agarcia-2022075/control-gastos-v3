@@ -1,0 +1,427 @@
+<div class="app-container" [class.collapsed]="isCollapsed" id="appContainer">
+  <!-- Background Abstract Glowing Orbs -->
+  <div class="bg-orbs-container" aria-hidden="true">
+    <div class="bg-orb orb-cyan"></div>
+    <div class="bg-orb orb-purple"></div>
+    <div class="bg-orb orb-green"></div>
+    <div class="bg-orb orb-magenta"></div>
+  </div>
+
+  <!-- Left Glassmorphism Sidebar Navigation (Collapsible with Submenu) -->
+  <aside class="app-sidebar" id="appSidebar">
+    <div>
+      <div class="sidebar-brand-box">
+        <div class="brand-icon-wrapper">
+          <img src="logo.jpg" alt="Logo control-gastos" class="brand-logo-img">
+        </div>
+        <span class="brand-name">control<span class="brand-accent">-gastos</span></span>
+      </div>
+
+      <nav class="sidebar-nav">
+        <span class="nav-group-title">Menú Principal</span>
+        
+        <a class="sidebar-nav-item" routerLink="/dashboard" title="Dashboard">
+          <span class="nav-item-icon">
+            <svg class="svg-icon" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="2"/><rect x="14" y="3" width="7" height="5" rx="2"/><rect x="14" y="12" width="7" height="9" rx="2"/><rect x="3" y="16" width="7" height="5" rx="2"/></svg>
+          </span>
+          <span>Dashboard</span>
+        </a>
+
+        <!-- Transacciones Dropdown Header -->
+        <div class="sidebar-nav-item nav-dropdown-toggle" [class.open]="isTxOpen" (click)="toggleTxSubmenu($event)" title="Transacciones">
+          <div style="display:flex; align-items:center; gap:0.85rem;">
+            <span class="nav-item-icon">
+              <svg class="svg-icon" viewBox="0 0 24 24"><path d="M7 10l5-5 5 5M7 14l5 5 5-5"/></svg>
+            </span>
+            <span>Transacciones</span>
+          </div>
+          <svg class="chevron-icon" viewBox="0 0 24 24" fill="none" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+
+        <!-- Sub-menu Items -->
+        <div class="sub-menu-container" [class.show]="isTxOpen" id="txSubmenu">
+          <a class="sub-menu-item" routerLink="/gasto" title="Registrar Gasto">
+            <svg style="width:14px; height:14px; stroke:#f43f5e; fill:none; stroke-width:2;" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <span>Registrar Gasto</span>
+          </a>
+          <a class="sub-menu-item active-sub" routerLink="/ingreso" title="Registrar Ingreso">
+            <svg style="width:14px; height:14px; stroke:#34d399; fill:none; stroke-width:2;" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+            <span>Registrar Ingreso</span>
+          </a>
+        </div>
+
+        <a class="sidebar-nav-item" routerLink="/presupuestos" title="Presupuestos">
+          <span class="nav-item-icon">
+            <svg class="svg-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg>
+          </span>
+          <span>Presupuestos</span>
+        </a>
+
+        <a class="sidebar-nav-item" routerLink="/categorias" routerLinkActive="active" title="Categorías">
+          <span class="nav-item-icon">
+            <svg class="svg-icon" viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+          </span>
+          <span>Categorías</span>
+        </a>
+
+        <span class="nav-group-title">Analítica</span>
+        <a class="sidebar-nav-item" routerLink="/reportes" routerLinkActive="active" title="Informes & Reportes">
+          <span class="nav-item-icon">
+            <svg class="svg-icon" viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+          </span>
+          <span>Informes & Reportes</span>
+        </a>
+
+        <span class="nav-group-title">Sistema</span>
+        <a class="sidebar-nav-item" routerLink="/configuracion" title="Configuración">
+          <span class="nav-item-icon">
+            <svg class="svg-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          </span>
+          <span>Configuración</span>
+        </a>
+      </nav>
+    </div>
+
+    <!-- User Profile Pill -->
+    <div class="sidebar-user-footer" *ngIf="currentUser">
+      <div class="sidebar-user-card">
+        <div class="user-avatar-mini" [class.has-img]="currentUser.avatarUrl">
+          <img *ngIf="currentUser.avatarUrl" [src]="currentUser.avatarUrl" [alt]="currentUser.name" class="user-avatar-img" (error)="currentUser.avatarUrl = undefined" referrerpolicy="no-referrer" />
+          <span *ngIf="!currentUser.avatarUrl">{{ currentUser.name.charAt(0).toUpperCase() }}</span>
+        </div>
+        <div class="user-info-mini">
+          <span class="user-name-mini">{{ currentUser.name }}</span>
+          <span class="user-email-mini">{{ currentUser.email }}</span>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content Wrapper -->
+  <div class="main-wrapper">
+    <!-- Topbar Header -->
+    <header class="topbar-header">
+      <div class="topbar-left">
+        <button class="sidebar-toggle-btn" (click)="toggleSidebar()" title="Desplegar / Contraer Menú">
+          <svg style="width:20px; height:20px; stroke:#ffffff; stroke-width:2.2; stroke-linecap:round; fill:none;" viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <span class="page-location-title">Control de Gastos — Registrar Ingreso</span>
+      </div>
+      
+      <div class="topbar-actions">
+        <app-notification-bell></app-notification-bell>
+        <div style="height: 24px; width: 1px; background: rgba(255,255,255,0.15);"></div>
+        <span style="font-size:0.85rem; font-weight:700; color:#34d399; display:flex; align-items:center; gap:0.4rem;">
+          <span style="width:8px; height:8px; border-radius:50%; background:#34d399; box-shadow:0 0 10px #34d399;"></span>
+          Sesión Activa
+        </span>
+        <button class="topbar-logout-shortcut" (click)="logout()" title="Cerrar Sesión">
+          <svg style="width:18px; height:18px; stroke:#fca5a5; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; fill:none;" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          <span>Cerrar Sesión</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- View Body -->
+    <div class="view-body">
+      <div class="view-top-header">
+        <div class="view-title-group">
+          <h1>Registrar Nuevo Ingreso</h1>
+          <p>Añade depósitos, salarios, reembolsos o ventas a tu balance personal</p>
+        </div>
+        <a routerLink="/dashboard" class="btn-back-dashboard">
+          <svg style="width:18px; height:18px; stroke:#ffffff; stroke-width:2; fill:none;" viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+          <span>Volver al Dashboard</span>
+        </a>
+      </div>
+
+      <!-- Feedback Alerts -->
+      <div *ngIf="successMessage" class="alert alert-success" role="alert">
+        ✓ {{ successMessage }}
+      </div>
+      <div *ngIf="errorMessage" class="alert alert-error" role="alert">
+        {{ errorMessage }}
+      </div>
+
+      <!-- 3 Income KPI Cards Grid -->
+      <div class="income-kpi-grid" *ngIf="stats">
+        <div class="income-kpi-card">
+          <div class="kpi-header-row">
+            <span class="kpi-label-text">Total Abonos Acumulados</span>
+            <div class="kpi-icon-box">
+              <svg style="width:20px; height:20px; stroke:#34d399; stroke-width:2; fill:none;" viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+            </div>
+          </div>
+          <div class="kpi-amount-text">Q {{ stats.ingresosTotales | number:'1.2-2' }}</div>
+          <div class="kpi-sub-text">↑ Mes actual: Q {{ (stats.ingresosMes !== undefined ? stats.ingresosMes : stats.ingresosTotales) | number:'1.2-2' }}</div>
+        </div>
+
+        <div class="income-kpi-card">
+          <div class="kpi-header-row">
+            <span class="kpi-label-text">Saldo Disponible</span>
+            <div class="kpi-icon-box">
+              <svg style="width:20px; height:20px; stroke:#38bdf8; stroke-width:2; fill:none;" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+            </div>
+          </div>
+          <div class="kpi-amount-text">Q {{ (stats.saldoDisponible >= 0 ? stats.saldoDisponible : 0) | number:'1.2-2' }}</div>
+          <div class="kpi-sub-text">Balance neto individual en tiempo real</div>
+        </div>
+
+        <div class="income-kpi-card">
+          <div class="kpi-header-row">
+            <span class="kpi-label-text">Categoría Principal</span>
+            <div class="kpi-icon-box">
+              <svg style="width:20px; height:20px; stroke:#34d399; stroke-width:2; fill:none;" viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            </div>
+          </div>
+          <div class="kpi-amount-text" style="font-size: 1.4rem; font-weight:800;">{{ mainIncomeCategory.name }}</div>
+          <div class="kpi-sub-text">{{ mainIncomeCategory.percentage }}% de los ingresos registrados</div>
+        </div>
+      </div>
+
+      <!-- Main Form & Recent Incomes Layout Grid -->
+      <div class="ingreso-main-grid">
+        <!-- Form Panel -->
+        <div class="glass-form-panel">
+          <h2 class="panel-section-title">
+            <svg style="width:22px; height:22px; stroke:#34d399; fill:none; stroke-width:2;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+            Formulario de Ingreso
+          </h2>
+
+          <form (submit)="onSubmit()">
+            <div class="form-grid">
+              <div class="form-group-full">
+                <label class="form-label">Monto del Ingreso (Q)</label>
+                <div class="input-wrapper">
+                  <span class="currency-prefix">Q</span>
+                  <input type="number" step="0.01" min="0.01" class="glass-input glass-input-currency" placeholder="0.00" [(ngModel)]="monto" name="monto" required>
+                </div>
+              </div>
+
+              <div class="form-group-full">
+                <label class="form-label">Concepto / Descripción del Ingreso</label>
+                <input type="text" class="glass-input" placeholder="Ej. Depósito Salario Quincenal, Reembolso..." [(ngModel)]="concepto" name="concepto" required>
+              </div>
+
+              <div>
+                <label class="form-label">Categoría de Ingreso</label>
+                <select class="glass-select" [(ngModel)]="categoria" (ngModelChange)="onCategoriaChange()" name="categoria" required>
+                  <option value="" disabled selected>Selecciona una categoría</option>
+                  <option *ngFor="let cat of incomeCategories" [value]="cat">{{ cat }}</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="form-label">Cuenta / Tarjeta de Destino</label>
+                <select class="glass-select" [(ngModel)]="cuenta" name="cuenta" required>
+                  <option value="Efectivo en Mano / Caja">
+                    💵 Efectivo en Mano / Caja — Saldo actual: Q {{ ((stats?.saldoEfectivo ?? 0) >= 0 ? stats?.saldoEfectivo : 0) | number:'1.2-2' }}
+                  </option>
+                  <option *ngFor="let card of availableCards" [value]="card.name">
+                    <ng-container *ngIf="card.type === 'CREDIT'">
+                      💳 {{ card.name }} ({{ card.cardNumberMask }}) [Abono a Crédito] — Deuda: Q {{ (card.currentDebt ?? 0) | number:'1.2-2' }} (Disp: Q {{ (card.availableCredit ?? card.balance) | number:'1.2-2' }})
+                    </ng-container>
+                    <ng-container *ngIf="card.type !== 'CREDIT'">
+                      🏧 {{ card.name }} ({{ card.cardNumberMask }}) [{{ card.type === 'SAVINGS' ? 'Ahorro' : 'Débito' }}] — Saldo: Q {{ card.balance | number:'1.2-2' }}
+                    </ng-container>
+                  </option>
+                </select>
+                <div *ngIf="availableCards.length === 0" style="margin-top:0.4rem; padding:0.45rem 0.75rem; border-radius:10px; background:rgba(52,211,153,0.1); border:1px solid rgba(52,211,153,0.25); font-size:0.8rem; color:#a7f3d0; display:flex; align-items:center; gap:0.45rem;">
+                  <span>💵</span>
+                  <span>Modo <strong>Efectivo</strong>: Tu ingreso se sumará directamente a tu efectivo líquido disponible.</span>
+                </div>
+                <div *ngIf="isSelectedCardCredit" style="margin-top:0.4rem; padding:0.45rem 0.75rem; border-radius:10px; background:rgba(52,211,153,0.12); border:1px solid rgba(52,211,153,0.3); font-size:0.8rem; color:#a7f3d0; display:flex; align-items:center; gap:0.45rem;">
+                  <span>✨</span>
+                  <span>Abono a Tarjeta de Crédito: Este movimiento reducirá tu saldo deudor (Deuda actual: <strong>Q {{ (selectedCardInfo?.currentDebt ?? 0) | number:'1.2-2' }}</strong>) y liberará crédito disponible.</span>
+                </div>
+              </div>
+
+              <div class="form-group-full">
+                <label class="form-label">Fecha de Recepción (Máximo Hoy)</label>
+                <input type="date" class="glass-input" [(ngModel)]="fecha" name="fecha" [max]="maxDate" required>
+              </div>
+
+              <div class="form-group-full">
+                <label class="form-label">Notas Adicionales / Referencia (Opcional)</label>
+                <textarea class="glass-textarea" placeholder="Número de lote, factura o notas adicionales..." [(ngModel)]="notas" name="notas"></textarea>
+              </div>
+            </div>
+
+            <div class="form-actions-row">
+              <a routerLink="/dashboard" class="btn-cancel" style="text-decoration:none; text-align:center;">Cancelar</a>
+              <button type="submit" class="btn-submit-emerald" [disabled]="submitting">
+                <svg style="width:18px; height:18px; stroke:#ffffff; stroke-width:2.5; fill:none;" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                <span>{{ submitting ? 'Guardando...' : 'Guardar Ingreso' }}</span>
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Recent Incomes List Panel -->
+        <div class="glass-form-panel">
+          <div class="table-header-row">
+            <h2 class="panel-section-title" style="margin-bottom:0;">
+              <svg style="width:22px; height:22px; stroke:#34d399; fill:none; stroke-width:2;" viewBox="0 0 24 24"><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/></svg>
+              Últimos Ingresos
+            </h2>
+
+            <!-- Buscador en Vivo en la Tabla -->
+            <div class="table-search-box" style="position: relative; display: flex; align-items: center;">
+              <input 
+                type="text" 
+                class="glass-search-input" 
+                placeholder="🔍 Buscar ingresos..." 
+                [(ngModel)]="searchTerm" 
+                (ngModelChange)="onSearchChange()"
+                (input)="onSearchChange()"
+                style="padding-right: 2.2rem;"
+              >
+              <button 
+                *ngIf="searchTerm" 
+                (click)="clearSearch()" 
+                class="btn-clear-search" 
+                title="Limpiar búsqueda y restaurar registros"
+                type="button"
+              >
+                ✕
+              </button>
+            </div>
+          </div>
+
+          <div class="table-responsive" style="margin-top: 1.25rem;">
+            <table class="income-table">
+              <thead>
+                <tr>
+                  <th>Concepto</th>
+                  <th>Categoría</th>
+                  <th>Fecha</th>
+                  <th>Monto</th>
+                  <th style="text-align: center;">Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let inc of paginatedIncomes">
+                  <td>
+                    <span style="font-weight:700; color:#ffffff; display:block;">{{ inc.title }}</span>
+                    <span style="font-size:0.78rem; color:#94a3b8;">{{ inc.merchant }}</span>
+                  </td>
+                  <td><span style="background:rgba(255,255,255,0.04); padding:0.25rem 0.6rem; border-radius:8px; font-size:0.78rem; color:#cbd5e1;">{{ inc.category }}</span></td>
+                  <td>{{ inc.date }}</td>
+                  <td class="income-amount-positive">+Q {{ inc.amount | number:'1.2-2' }}</td>
+                  <td style="text-align: center;">
+                    <div style="display:flex; justify-content:center; gap:0.4rem;">
+                      <!-- Botón Editar -->
+                      <button class="btn-edit-icon" (click)="openEditModal(inc, $event)" title="Editar Ingreso">
+                        <svg style="width:15px; height:15px; stroke:#38bdf8; stroke-width:2; fill:none;" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                      </button>
+                      <!-- Botón Eliminar -->
+                      <button class="btn-delete-icon" (click)="openDeleteModal(inc, $event)" title="Eliminar Ingreso">
+                        <svg style="width:15px; height:15px; stroke:#f43f5e; stroke-width:2; fill:none;" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+
+                <tr *ngIf="paginatedIncomes.length === 0">
+                  <td colspan="5" style="text-align: center; padding: 2rem 1rem; color: #94a3b8;">
+                    No se encontraron ingresos que coincidan con la búsqueda.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Paginación de Tabla -->
+          <div class="pagination-footer" *ngIf="filteredIncomes.length > 0">
+            <span class="pagination-info">Página {{ currentPage }} de {{ totalPages }} ({{ filteredIncomes.length }} ingresos)</span>
+            <div class="pagination-buttons">
+              <button class="btn-page" (click)="prevPage()" [disabled]="currentPage === 1">‹ Anterior</button>
+              <button class="btn-page" (click)="nextPage()" [disabled]="currentPage === totalPages">Siguiente ›</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <p>&copy; 2026 control-gastos — Módulo de Gestión de Ingresos Financieros</p>
+    </footer>
+  </div>
+</div>
+
+<!-- Modal de Edición de Ingreso -->
+<div class="glass-modal-backdrop" *ngIf="transactionToEdit">
+  <div class="glass-modal-card">
+    <div class="modal-icon-header-cyan">
+      <svg style="width:28px; height:28px; stroke:#38bdf8; stroke-width:2; fill:none;" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+    </div>
+    <h3 class="modal-title">Editar Ingreso</h3>
+    <p class="modal-description" style="margin-bottom:1.25rem;">
+      Actualiza los datos del ingreso registrado
+    </p>
+
+    <div class="form-grid" style="text-align: left;">
+      <div class="form-group-full">
+        <label class="form-label">Concepto / Descripción</label>
+        <input type="text" class="glass-input" [(ngModel)]="editTitle" required>
+      </div>
+
+      <div class="form-group-full">
+        <label class="form-label">Monto (Q)</label>
+        <div class="input-wrapper">
+          <span class="currency-prefix">Q</span>
+          <input type="number" step="0.01" min="0.01" class="glass-input glass-input-currency" [(ngModel)]="editAmount" required>
+        </div>
+      </div>
+
+      <div>
+        <label class="form-label">Categoría</label>
+        <select class="glass-select" [(ngModel)]="editCategory" required>
+          <option value="Salario / Nómina">Salario / Nómina</option>
+          <option value="Reembolsos & Viáticos">Reembolsos & Viáticos</option>
+          <option value="Ventas / Negocios">Ventas / Negocios</option>
+          <option value="Inversiones & Rendimientos">Inversiones & Rendimientos</option>
+          <option value="Bonos & Regalos">Bonos & Regalos</option>
+          <option value="Otros Ingresos">Otros Ingresos</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="form-label">Fecha (Máximo Hoy)</label>
+        <input type="date" class="glass-input" [(ngModel)]="editDate" [max]="maxDate" required>
+      </div>
+    </div>
+
+    <div class="modal-actions" style="margin-top:1.5rem;">
+      <button class="btn-cancel" (click)="cancelEdit()" [disabled]="editing">Cancelar</button>
+      <button class="btn-submit-emerald" (click)="confirmEdit()" [disabled]="editing">
+        <span>{{ editing ? 'Guardando...' : 'Actualizar Ingreso' }}</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de Confirmación para Eliminar Ingreso -->
+<div class="glass-modal-backdrop" *ngIf="transactionToDelete">
+  <div class="glass-modal-card">
+    <div class="modal-icon-header">
+      <svg style="width:28px; height:28px; stroke:#f43f5e; stroke-width:2; fill:none;" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+    </div>
+    <h3 class="modal-title">¿Eliminar Ingreso?</h3>
+    <p class="modal-description">
+      Estás a punto de eliminar el ingreso <strong>"{{ transactionToDelete.title }}"</strong> por un monto de 
+      <span class="highlight-income">+Q {{ transactionToDelete.amount | number:'1.2-2' }}</span>.
+      <br><br>
+      Esta acción actualizará tu saldo disponible y tus reportes financieros en tiempo real.
+    </p>
+
+    <div class="modal-actions">
+      <button class="btn-cancel" (click)="cancelDelete()" [disabled]="deleting">Cancelar</button>
+      <button class="btn-danger-confirm" (click)="confirmDelete()" [disabled]="deleting">
+        <span>{{ deleting ? 'Eliminando...' : 'Sí, Eliminar' }}</span>
+      </button>
+    </div>
+  </div>
+</div>
