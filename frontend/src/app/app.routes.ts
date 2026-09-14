@@ -1,6 +1,5 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
-import { roleGuard } from './core/guards/role.guard';
 
 export const routes: Routes = [
   {
@@ -33,12 +32,26 @@ export const routes: Routes = [
   },
   {
     path: 'admin',
-    loadComponent: () => import('./features/admin/admin.component').then(m => m.AdminComponent),
-    canActivate: [authGuard, roleGuard]
+    redirectTo: 'dashboard'
   },
   {
     path: 'reportes',
     loadComponent: () => import('./features/reportes/reportes.component').then(m => m.ReportesComponent),
+    canActivate: [authGuard]
+  },
+  {
+    path: 'presupuestos',
+    loadComponent: () => import('./features/presupuestos/presupuestos.component').then(m => m.PresupuestosComponent),
+    canActivate: [authGuard]
+  },
+  {
+    path: 'categorias',
+    loadComponent: () => import('./features/categorias/categorias.component').then(m => m.CategoriasComponent),
+    canActivate: [authGuard]
+  },
+  {
+    path: 'configuracion',
+    loadComponent: () => import('./features/configuracion/configuracion.component').then(m => m.ConfiguracionComponent),
     canActivate: [authGuard]
   },
   {

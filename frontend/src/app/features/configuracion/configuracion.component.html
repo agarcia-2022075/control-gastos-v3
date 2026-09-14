@@ -1,0 +1,412 @@
+<div class="app-container" [class.collapsed]="isCollapsed" id="appContainer">
+  <!-- Background Abstract Glowing Orbs -->
+  <div class="bg-orbs-container" aria-hidden="true">
+    <div class="bg-orb orb-cyan"></div>
+    <div class="bg-orb orb-purple"></div>
+    <div class="bg-orb orb-blue"></div>
+    <div class="bg-orb orb-magenta"></div>
+  </div>
+
+  <!-- Left Glassmorphism Sidebar Navigation -->
+  <aside class="app-sidebar" id="appSidebar">
+    <div>
+      <div class="sidebar-brand-box">
+        <div class="brand-icon-wrapper">
+          <img src="logo.jpg" alt="Logo control-gastos" class="brand-logo-img">
+        </div>
+        <span class="brand-name">control<span class="brand-accent">-gastos</span></span>
+      </div>
+
+      <nav class="sidebar-nav">
+        <span class="nav-group-title">Menú Principal</span>
+        
+        <a class="sidebar-nav-item" routerLink="/dashboard" title="Dashboard">
+          <span class="nav-item-icon">
+            <svg class="svg-icon" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="2"/><rect x="14" y="3" width="7" height="5" rx="2"/><rect x="14" y="12" width="7" height="9" rx="2"/><rect x="3" y="16" width="7" height="5" rx="2"/></svg>
+          </span>
+          <span>Dashboard</span>
+        </a>
+
+        <!-- Transacciones Dropdown Header -->
+        <div class="sidebar-nav-item nav-dropdown-toggle" [class.open]="isTxOpen" (click)="toggleTxSubmenu($event)" title="Transacciones">
+          <div style="display:flex; align-items:center; gap:0.85rem;">
+            <span class="nav-item-icon">
+              <svg class="svg-icon" viewBox="0 0 24 24"><path d="M7 10l5-5 5 5M7 14l5 5 5-5"/></svg>
+            </span>
+            <span>Transacciones</span>
+          </div>
+          <svg class="chevron-icon" viewBox="0 0 24 24" fill="none" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+
+        <!-- Sub-menu Items -->
+        <div class="sub-menu-container" [class.show]="isTxOpen" id="txSubmenu">
+          <a class="sub-menu-item" routerLink="/gasto" title="Registrar Gasto">
+            <svg style="width:14px; height:14px; stroke:#f43f5e; fill:none; stroke-width:2;" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <span>Registrar Gasto</span>
+          </a>
+          <a class="sub-menu-item" routerLink="/ingreso" title="Registrar Ingreso">
+            <svg style="width:14px; height:14px; stroke:#34d399; fill:none; stroke-width:2;" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+            <span>Registrar Ingreso</span>
+          </a>
+        </div>
+
+        <a class="sidebar-nav-item" routerLink="/presupuestos" title="Presupuestos">
+          <span class="nav-item-icon">
+            <svg class="svg-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg>
+          </span>
+          <span>Presupuestos</span>
+        </a>
+
+        <a class="sidebar-nav-item" routerLink="/categorias" routerLinkActive="active" title="Categorías">
+          <span class="nav-item-icon">
+            <svg class="svg-icon" viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+          </span>
+          <span>Categorías</span>
+        </a>
+
+        <span class="nav-group-title">Analítica</span>
+        <a class="sidebar-nav-item" routerLink="/reportes" title="Informes & Reportes">
+          <span class="nav-item-icon">
+            <svg class="svg-icon" viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+          </span>
+          <span>Informes & Reportes</span>
+        </a>
+
+        <span class="nav-group-title">Sistema</span>
+        <a class="sidebar-nav-item active" routerLink="/configuracion" title="Configuración">
+          <span class="nav-item-icon">
+            <svg class="svg-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          </span>
+          <span>Configuración</span>
+        </a>
+      </nav>
+    </div>
+
+    <!-- User Profile Pill -->
+    <div class="sidebar-user-footer" *ngIf="currentUser">
+      <div class="sidebar-user-card">
+        <div class="user-avatar-mini" [class.has-img]="currentUser.avatarUrl">
+          <img *ngIf="currentUser.avatarUrl" [src]="currentUser.avatarUrl" [alt]="currentUser.name" class="user-avatar-img" (error)="currentUser.avatarUrl = undefined" referrerpolicy="no-referrer" />
+          <span *ngIf="!currentUser.avatarUrl">{{ currentUser.name.charAt(0).toUpperCase() }}</span>
+        </div>
+        <div class="user-info-mini">
+          <span class="user-name-mini">{{ currentUser.name }}</span>
+          <span class="user-email-mini">{{ currentUser.email }}</span>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content Wrapper -->
+  <div class="main-wrapper">
+    <!-- Topbar Header -->
+    <header class="topbar-header">
+      <div class="topbar-left">
+        <button class="sidebar-toggle-btn" (click)="toggleSidebar()" title="Desplegar / Contraer Menú">
+          <svg style="width:20px; height:20px; stroke:#ffffff; stroke-width:2.2; stroke-linecap:round; fill:none;" viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <span class="page-location-title">Control de Gastos — Configuración & Perfil Laboral</span>
+      </div>
+      
+      <div class="topbar-actions">
+        <app-notification-bell></app-notification-bell>
+        <div style="height: 24px; width: 1px; background: rgba(255,255,255,0.15);"></div>
+        <span style="font-size:0.85rem; font-weight:700; color:#34d399; display:flex; align-items:center; gap:0.4rem;">
+          <span style="width:8px; height:8px; border-radius:50%; background:#34d399; box-shadow:0 0 10px #34d399;"></span>
+          Sesión Activa
+        </span>
+        <button class="topbar-logout-shortcut" (click)="logout()" title="Cerrar Sesión">
+          <svg style="width:18px; height:18px; stroke:#fca5a5; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; fill:none;" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          <span>Cerrar Sesión</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- View Body -->
+    <div class="view-body">
+      <!-- Title Header -->
+      <div class="view-top-header">
+        <div class="view-title-group">
+          <h1>Configuración & Perfil Laboral</h1>
+          <p>Gestiona tu salario base mensual, consulta tus prestaciones de ley guatemaltecas y revisa tus preferencias del sistema</p>
+        </div>
+        <a routerLink="/dashboard" class="btn-back-dashboard">
+          <svg style="width:18px; height:18px; stroke:#ffffff; stroke-width:2; fill:none;" viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+          <span>Volver al Dashboard</span>
+        </a>
+      </div>
+
+      <!-- Main Config Grid -->
+      <div class="config-main-grid">
+        <!-- SECCIÓN 1: PERFIL LABORAL Y PRESTACIONES DE LEY GUATEMALA (Hallazgo 10) -->
+        <div class="glass-section-panel">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; border-bottom:1px solid rgba(255,255,255,0.08); padding-bottom:1rem;">
+            <div style="display:flex; align-items:center; gap:0.75rem;">
+              <div class="icon-avatar emerald">🇬🇹</div>
+              <div>
+                <h2 class="panel-section-title" style="margin:0;">Perfil Salarial & Prestaciones de Ley</h2>
+                <span style="font-size:0.82rem; color:#94a3b8;">Legislación laboral de la República de Guatemala (Decretos 42-92 y 76-78)</span>
+              </div>
+            </div>
+            <span class="badge-country">Guatemala (GTQ - Q)</span>
+          </div>
+
+          <!-- Salario Base Input Form -->
+          <div class="salary-input-box">
+            <div>
+              <label class="form-label" style="font-size:0.95rem; font-weight:800; color:#ffffff;">Salario Ordinario Mensual (Q)</label>
+              <span style="font-size:0.8rem; color:#94a3b8; display:block; margin-top:0.15rem;">
+                Tu remuneración fija mensual base utilizada para calcular tus derechos laborales.
+              </span>
+            </div>
+
+            <div class="salary-action-group">
+              <div class="input-prefix-wrap">
+                <span class="currency-tag">Q</span>
+                <input type="number" step="100" min="1" class="glass-salary-input" [(ngModel)]="editSalaryBase" placeholder="8500.00">
+              </div>
+              <button class="btn-save-salary" (click)="saveSalaryProfile()" [disabled]="updatingSalary">
+                {{ updatingSalary ? 'Guardando...' : '✓ Guardar Salario' }}
+              </button>
+            </div>
+          </div>
+
+          <!-- Legal Benefits Projection Cards Grid -->
+          <h3 style="font-size:1.05rem; font-weight:700; color:#e2e8f0; margin:1.75rem 0 1rem 0; display:flex; align-items:center; gap:0.5rem;">
+            <span>⚖️</span>
+            <span>Cálculo Oficial de Prestaciones Laborales de Ley:</span>
+          </h3>
+
+          <div class="benefits-cards-grid">
+            <!-- Bono 14 Card -->
+            <div class="benefit-card">
+              <div class="benefit-card-header">
+                <div style="display:flex; align-items:center; gap:0.6rem;">
+                  <span style="font-size:1.6rem;">🎁</span>
+                  <div>
+                    <h4 style="margin:0; font-size:1.05rem; font-weight:800; color:#ffffff;">Bono 14</h4>
+                    <span style="font-size:0.75rem; color:#a7f3d0; font-weight:600;">Decreto No. 42-92</span>
+                  </div>
+                </div>
+                <span class="benefit-badge">100% de Salario</span>
+              </div>
+
+              <div class="benefit-amount-row">
+                <span class="amount-val">Q {{ (prestaciones?.bono14?.montoEstimado || editSalaryBase || 0) | number:'1.2-2' }}</span>
+                <span class="amount-sub">Acreditación obligatoria en julio</span>
+              </div>
+
+              <div class="benefit-timing-box">
+                <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.8rem;">
+                  <span style="color:#94a3b8;">📅 Fecha de pago legal:</span>
+                  <strong style="color:#ffffff;">15 de julio</strong>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.8rem; margin-top:0.35rem;">
+                  <span style="color:#94a3b8;">⏳ Cuenta regresiva:</span>
+                  <strong style="color:#38bdf8;">{{ prestaciones?.bono14?.diasRestantes ?? 305 }} días restantes</strong>
+                </div>
+              </div>
+
+              <div class="benefit-card-footer">
+                <a routerLink="/ingreso" [queryParams]="{ tipo: 'BONO14' }" class="btn-benefit-action">
+                  <span>+ Ir a Registrar en Ingresos</span>
+                  <svg style="width:14px; height:14px; stroke:currentColor; fill:none; stroke-width:2;" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                </a>
+              </div>
+            </div>
+
+            <!-- Aguinaldo Card -->
+            <div class="benefit-card">
+              <div class="benefit-card-header">
+                <div style="display:flex; align-items:center; gap:0.6rem;">
+                  <span style="font-size:1.6rem;">🎄</span>
+                  <div>
+                    <h4 style="margin:0; font-size:1.05rem; font-weight:800; color:#ffffff;">Aguinaldo</h4>
+                    <span style="font-size:0.75rem; color:#bae6fd; font-weight:600;">Decreto No. 76-78</span>
+                  </div>
+                </div>
+                <span class="benefit-badge" style="background:rgba(56,189,248,0.15); color:#38bdf8; border-color:rgba(56,189,248,0.3);">100% de Salario</span>
+              </div>
+
+              <div class="benefit-amount-row">
+                <span class="amount-val" style="color:#38bdf8;">Q {{ (prestaciones?.aguinaldo?.montoEstimado || editSalaryBase || 0) | number:'1.2-2' }}</span>
+                <span class="amount-sub">Acreditación obligatoria en diciembre</span>
+              </div>
+
+              <div class="benefit-timing-box">
+                <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.8rem;">
+                  <span style="color:#94a3b8;">📅 Fecha de pago legal:</span>
+                  <strong style="color:#ffffff;">15 de diciembre</strong>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.8rem; margin-top:0.35rem;">
+                  <span style="color:#94a3b8;">⏳ Cuenta regresiva:</span>
+                  <strong style="color:#c084fc;">{{ prestaciones?.aguinaldo?.diasRestantes ?? 93 }} días restantes</strong>
+                </div>
+              </div>
+
+              <div class="benefit-card-footer">
+                <a routerLink="/ingreso" [queryParams]="{ tipo: 'AGUINALDO' }" class="btn-benefit-action">
+                  <span>+ Ir a Registrar en Ingresos</span>
+                  <svg style="width:14px; height:14px; stroke:currentColor; fill:none; stroke-width:2;" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Legal Info Explanatory Box -->
+          <div class="legal-info-banner" style="margin-top:1.5rem;">
+            <div style="font-size:1.2rem;">🏛️</div>
+            <div style="font-size:0.82rem; color:#cbd5e1; line-height:1.5;">
+              <strong>Marco Jurídico de Guatemala:</strong> El <em>Bono 14 (Decreto 42-92)</em> y el <em>Aguinaldo (Decreto 76-78)</em> son derechos irrenunciables de los trabajadores guatemaltecos. Al mantener actualizado tu salario ordinario, la aplicación calcula con exactitud legal tus cobros de mitad y fin de año y te permite registrarlos en 1 clic en la sección de ingresos.
+            </div>
+          </div>
+        </div>
+
+        <!-- COLUMNA DERECHA: PERFIL DE USUARIO Y PREFERENCIAS DE ALERTAS -->
+        <div class="config-side-col">
+          <!-- SECCIÓN 2: INFORMACIÓN DE LA CUENTA -->
+          <div class="glass-section-panel">
+            <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:1.5rem; border-bottom:1px solid rgba(255,255,255,0.08); padding-bottom:1rem;">
+              <div class="icon-avatar purple">👤</div>
+              <div>
+                <h2 class="panel-section-title" style="margin:0;">Perfil de Usuario</h2>
+                <span style="font-size:0.82rem; color:#94a3b8;">Datos personales y sesión activa</span>
+              </div>
+            </div>
+
+            <div style="display:flex; flex-direction:column; gap:1.25rem;">
+              <div style="display:flex; align-items:center; gap:1rem; padding-bottom:1rem; border-bottom:1px solid rgba(255,255,255,0.06);">
+                <div class="user-avatar-mini" style="width:54px; height:54px; min-width:54px; font-size:1.4rem; border-radius:14px;" [class.has-img]="currentUser?.avatarUrl">
+                  <img *ngIf="currentUser?.avatarUrl" [src]="currentUser.avatarUrl" [alt]="currentUser?.name" class="user-avatar-img" style="border-radius:14px;" (error)="currentUser.avatarUrl = undefined" referrerpolicy="no-referrer" />
+                  <span *ngIf="!currentUser?.avatarUrl">{{ currentUser?.name?.charAt(0)?.toUpperCase() }}</span>
+                </div>
+                <div style="overflow:hidden;">
+                  <strong style="font-size:1.15rem; color:#ffffff; display:block; text-overflow:ellipsis; overflow:hidden; white-space:nowrap;">{{ currentUser?.name }}</strong>
+                  <span style="font-size:0.85rem; color:#94a3b8; display:block; text-overflow:ellipsis; overflow:hidden; white-space:nowrap;">{{ currentUser?.email }}</span>
+                  <span *ngIf="currentUser?.avatarUrl" style="font-size:0.75rem; color:#38bdf8; display:inline-flex; align-items:center; gap:0.3rem; margin-top:0.25rem;">
+                    <svg style="width:12px; height:12px; fill:currentColor;" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                    Foto sincronizada con Google
+                  </span>
+                </div>
+              </div>
+
+              <div class="profile-field-row">
+                <span class="field-label">Nombre Completo:</span>
+                <strong class="field-value">{{ currentUser?.name }}</strong>
+              </div>
+
+              <div class="profile-field-row">
+                <span class="field-label">Correo Electrónico:</span>
+                <strong class="field-value">{{ currentUser?.email }}</strong>
+              </div>
+
+              <div class="profile-field-row">
+                <span class="field-label">Moneda del Sistema:</span>
+                <strong class="field-value" style="color:#34d399;">Quetzal Guatemalteco (Q / GTQ)</strong>
+              </div>
+
+              <div class="profile-field-row">
+                <span class="field-label">Tema de Interfaz:</span>
+                <span class="theme-pill">Deep Indigo Glassmorphism</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- SECCIÓN 3: PREFERENCIAS DE ALERTAS Y NOTIFICACIONES INTELIGENTES -->
+          <div class="glass-section-panel alerts-panel">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; border-bottom:1px solid rgba(255,255,255,0.08); padding-bottom:1rem;">
+              <div style="display:flex; align-items:center; gap:0.75rem;">
+                <div class="icon-avatar amber">🔔</div>
+                <div>
+                  <h2 class="panel-section-title" style="margin:0;">Preferencias de Alertas</h2>
+                  <span style="font-size:0.82rem; color:#94a3b8;">Configura qué avisos mostrar en tu Dashboard</span>
+                </div>
+              </div>
+              <span class="alerts-count-badge">
+                {{ (alertPrefs.alertCardDue ? 1 : 0) + (alertPrefs.alertBudgetLimit ? 1 : 0) + (alertPrefs.alertFixedExpenses ? 1 : 0) + (alertPrefs.alertLegalBenefits ? 1 : 0) }} / 4 activas
+              </span>
+            </div>
+
+            <div class="alerts-list">
+              <!-- Alerta 1: Vencimiento de Tarjetas -->
+              <div class="alert-toggle-item" [class.active]="alertPrefs.alertCardDue" (click)="toggleAlert('alertCardDue')">
+                <div class="alert-item-left">
+                  <div class="alert-icon-box card-icon">💳</div>
+                  <div class="alert-item-text">
+                    <div class="alert-item-header">
+                      <strong>Vencimiento de Tarjetas</strong>
+                      <span class="alert-tag">Tarjetas</span>
+                    </div>
+                    <p>Avisa cuando falten 5 días o menos para el día límite de pago de tus tarjetas para prevenir recargos.</p>
+                  </div>
+                </div>
+                <div class="toggle-switch-wrapper">
+                  <button type="button" class="modern-toggle" [class.on]="alertPrefs.alertCardDue" [disabled]="updatingPref === 'alertCardDue'" aria-label="Alternar alerta de vencimiento de tarjetas">
+                    <span class="toggle-thumb"></span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Alerta 2: Límite Presupuestario 80% -->
+              <div class="alert-toggle-item" [class.active]="alertPrefs.alertBudgetLimit" (click)="toggleAlert('alertBudgetLimit')">
+                <div class="alert-item-left">
+                  <div class="alert-icon-box warning-icon">⚠️</div>
+                  <div class="alert-item-text">
+                    <div class="alert-item-header">
+                      <strong>Límite Presupuestario (80%)</strong>
+                      <span class="alert-tag amber-tag">Salud Financiera</span>
+                    </div>
+                    <p>Advierte en el Dashboard si tus egresos mensuales superan el 80% de tu salario base ordinario.</p>
+                  </div>
+                </div>
+                <div class="toggle-switch-wrapper">
+                  <button type="button" class="modern-toggle" [class.on]="alertPrefs.alertBudgetLimit" [disabled]="updatingPref === 'alertBudgetLimit'" aria-label="Alternar alerta de límite presupuestario">
+                    <span class="toggle-thumb"></span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Alerta 3: Gastos Fijos Pendientes -->
+              <div class="alert-toggle-item" [class.active]="alertPrefs.alertFixedExpenses" (click)="toggleAlert('alertFixedExpenses')">
+                <div class="alert-item-left">
+                  <div class="alert-icon-box clock-icon">⏰</div>
+                  <div class="alert-item-text">
+                    <div class="alert-item-header">
+                      <strong>Gastos Fijos Pendientes</strong>
+                      <span class="alert-tag cyan-tag">Compromisos</span>
+                    </div>
+                    <p>Recuerda al inicio de mes revisar y apartar fondos para alquiler, servicios y compromisos fijos.</p>
+                  </div>
+                </div>
+                <div class="toggle-switch-wrapper">
+                  <button type="button" class="modern-toggle" [class.on]="alertPrefs.alertFixedExpenses" [disabled]="updatingPref === 'alertFixedExpenses'" aria-label="Alternar alerta de gastos fijos">
+                    <span class="toggle-thumb"></span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Alerta 4: Temporada de Prestaciones -->
+              <div class="alert-toggle-item" [class.active]="alertPrefs.alertLegalBenefits" (click)="toggleAlert('alertLegalBenefits')">
+                <div class="alert-item-left">
+                  <div class="alert-icon-box benefits-icon">🇬🇹</div>
+                  <div class="alert-item-text">
+                    <div class="alert-item-header">
+                      <strong>Temporada de Prestaciones</strong>
+                      <span class="alert-tag emerald-tag">Guatemala</span>
+                    </div>
+                    <p>Muestra notificaciones con el cálculo oficial y cuenta regresiva de Bono 14 y Aguinaldo.</p>
+                  </div>
+                </div>
+                <div class="toggle-switch-wrapper">
+                  <button type="button" class="modern-toggle" [class.on]="alertPrefs.alertLegalBenefits" [disabled]="updatingPref === 'alertLegalBenefits'" aria-label="Alternar alerta de prestaciones de ley">
+                    <span class="toggle-thumb"></span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
